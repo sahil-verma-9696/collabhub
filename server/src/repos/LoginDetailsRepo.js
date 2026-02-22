@@ -13,7 +13,7 @@ import { Types } from "mongoose";
 export async function create(loginDetails, options = {}) {
   const newLoginDetails = new LoginDetails({
     ...loginDetails,
-    accountId: new Types.ObjectId(loginDetails.accountId),
+    account: new Types.ObjectId(loginDetails.account),
   });
 
   return await newLoginDetails.save(options);
@@ -24,7 +24,7 @@ export async function create(loginDetails, options = {}) {
  ************************************************************************/
 export async function getLoginDetailsByAccountId(accountId) {
   return await LoginDetails.findOne({
-    accountId: new Types.ObjectId(accountId),
+    account: new Types.ObjectId(accountId),
   });
 }
 /************************************************************************

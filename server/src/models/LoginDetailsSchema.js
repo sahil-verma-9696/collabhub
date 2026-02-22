@@ -12,10 +12,10 @@ export const AUTH_METHOD = {
 
 const loginDetailsSchema = new mongoose.Schema(
   {
-    accountId: {
+    account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
-      required: [true, "Account ID is required"],
+      required: [true, "Account is required"],
       unique: true,
     },
     password: {

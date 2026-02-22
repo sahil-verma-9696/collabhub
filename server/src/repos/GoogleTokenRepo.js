@@ -14,7 +14,7 @@ import { Types } from "mongoose";
 export async function create(payload, options = {}) {
   const doc = new GoogleToken({
     ...payload,
-    accountId: new Types.ObjectId(payload.accountId),
+    account: new Types.ObjectId(payload.account),
   });
 
   return await doc.save(options);

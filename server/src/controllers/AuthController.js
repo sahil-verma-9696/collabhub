@@ -40,11 +40,11 @@ export async function register(req, res, next) {
     const user = await userRepo.create(req.body, { session });
 
     // 2️⃣ Create account linked to user
-    const account = await accountRepo.create({ userId: user._id }, { session });
+    const account = await accountRepo.create({ user: user._id }, { session });
 
     // 3️⃣ Create login details linked to account
     await loginDetailsRepo.create(
-      { accountId: account._id, ...req.body },
+      { account: account._id, ...req.body },
       { session },
     );
 
@@ -113,7 +113,7 @@ export async function googleAuth(req, res, next) {
 
     const token = tokenService.generateToken({
       userId: existingUser._id,
-      accountId: existingUser.accountId,
+      accountId: existingAccount._id,
       email: existingUser.email,
       name: existingUser.name,
       trialEndAt: null,
@@ -142,7 +142,7 @@ export async function googleAuth(req, res, next) {
     // 2️⃣ Create account linked to user
     const account = await accountRepo.create(
       {
-        userId: user._id,
+        user: user._id,
         isEmailVerified: true,
         emailVerifiedAt: new Date(),
         trialEndAt: null,
@@ -153,7 +153,7 @@ export async function googleAuth(req, res, next) {
     // 3️⃣ Create login details linked to account
     await loginDetailsRepo.create(
       {
-        accountId: account._id,
+        account: account._id,
         password: null,
         googleId: googleUser.id,
         authMethod: AUTH_METHOD.GOOGLE,
@@ -164,7 +164,7 @@ export async function googleAuth(req, res, next) {
     // Saving Google Token for future use
     await googleTokenRepo.create(
       {
-        accountId: account._id,
+        account: account._id,
         refreshToken: googleUser.refresh_token,
         expiryDate: googleUser.expiry_date,
         scope: scopes,
@@ -173,7 +173,7 @@ export async function googleAuth(req, res, next) {
     );
 
     await session.commitTransaction();
-    
+
     session.endSession();
 
     // 4️⃣ Generate token

@@ -13,7 +13,7 @@ import { Types } from "mongoose";
 export async function create(account, options = {}) {
   const newAccount = new Account({
     ...account,
-    userId: new Types.ObjectId(account.userId),
+    user: new Types.ObjectId(account.user),
   });
 
   return await newAccount.save(options);
@@ -24,7 +24,7 @@ export async function create(account, options = {}) {
  ************************************************************************/
 export async function getAccountByUserId(userId) {
   return await Account.findOne({
-    userId: new Types.ObjectId(userId),
+    user: new Types.ObjectId(userId),
   });
 }
 
@@ -33,7 +33,7 @@ export async function getAccountByUserId(userId) {
  ************************************************************************/
 export async function updateIsEmailVerifiedByUserId(userId, isEmailVerified) {
   return await Account.updateOne(
-    { userId: new Types.ObjectId(userId) },
+    { user: new Types.ObjectId(userId) },
     { $set: { isEmailVerified, emailVerifiedAt: new Date() } },
     { upsert: true },
   );
