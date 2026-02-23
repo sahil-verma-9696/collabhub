@@ -4,29 +4,25 @@ const ProjectSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Project name is required"],
       trim: true,
-      maxlength: 100,
+      maxlength: [100, "Name should not be more than 100 characters"],
     },
 
     description: {
       type: String,
       trim: true,
       default: null,
+      maxlength: [500, "Description should not exceed 500 characters"],
     },
 
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "Owner is required"],
       index: true,
     },
 
-    visibility: {
-      type: String,
-      enum: ["public", "private"],
-      default: "private",
-    },
 
     teamLimit: {
       type: Number,
