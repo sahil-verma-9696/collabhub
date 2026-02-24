@@ -30,37 +30,37 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    methods: {
+      cascadeDelete: async function () {
+        const session = await mongoose.startSession();
+
+        try {
+          session.startTransaction();
+
+          // Get all accounts of this user
+          const accounts = await Account.find({ user: this._id }).session(
+            session,
+          );
+
+          // Cascade delete each account
+          for (const account of accounts) {
+            await account.cascadeDelete(session);
+          }
+
+          // Delete user
+          await this.deleteOne({ session });
+
+          await session.commitTransaction();
+        } catch (err) {
+          await session.abortTransaction();
+          throw err;
+        } finally {
+          session.endSession();
+        }
+      },
+    },
   },
 );
-
-/**
- * User → Account → LoginDetails
- */
-userSchema.methods.cascadeDelete = async function () {
-  const session = await mongoose.startSession();
-
-  try {
-    session.startTransaction();
-
-    // Get all accounts of this user
-    const accounts = await Account.find({ userId: this._id }).session(session);
-
-    // Cascade delete each account
-    for (const account of accounts) {
-      await account.cascadeDelete(session);
-    }
-
-    // Delete user
-    await this.deleteOne({ session });
-
-    await session.commitTransaction();
-  } catch (err) {
-    await session.abortTransaction();
-    throw err;
-  } finally {
-    session.endSession();
-  }
-};
 
 /**
  * Create User model

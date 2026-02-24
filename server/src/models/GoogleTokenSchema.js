@@ -7,10 +7,10 @@ import mongoose from "mongoose";
 
 const googleTokenSchema = new mongoose.Schema(
   {
-    accountId: {
+    account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
-      required: [true, "Account ID is required"],
+      required: [true, "Account is required"],
       unique: true, // one Google connection per account
       index: true,
     },

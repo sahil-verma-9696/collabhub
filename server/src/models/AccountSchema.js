@@ -9,10 +9,10 @@ import GoogleToken from "./GoogleTokenSchema.js";
 
 const accountSchema = new mongoose.Schema(
   {
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User ID is required"],
+      required: [true, "User is required"],
     },
     isEmailVerified: {
       type: Boolean,
@@ -48,12 +48,12 @@ const accountSchema = new mongoose.Schema(
         try {
           // Delete all login details
           await LoginDetails.deleteMany({
-            accountId: this._id,
+            account: this._id,
           }).session(session);
 
           // Delete all google tokens
           await GoogleToken.deleteMany({
-            accountId: this._id,
+            account: this._id,
           }).session(session);
 
           // Delete account
