@@ -19,7 +19,7 @@ const ProjectSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "Owner is required"],
+      required: [false, "Owner is optional"],
       index: true,
     },
 

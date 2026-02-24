@@ -21,7 +21,7 @@ import { devFormat, prodFormat, morganOptions } from "./config/morgan.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import createSocketManager from "./socket/socketManager.js";
-
+import ProjectRoutes from "./routes/ProjectRoutes.js";
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
@@ -51,6 +51,7 @@ app.use(cookieParser());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/projects", ProjectRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
@@ -132,6 +133,14 @@ async function startServer() {
       console.log(`  GET  /api/users/profile`);
       console.log(`  PUT  /api/users/profile`);
       console.log(`  GET  /api/users`);
+
+
+      // Project Routes
+      console.log(`  POST /api/projects`);
+      console.log(`  GET  /api/projects`);
+      console.log(`  GET  /api/projects/:id`);
+      console.log(`  PUT  /api/projects/:id`);
+      console.log(`  DELETE /api/projects/:id`);
     });
   } catch (error) {
     logger.error("Failed to start server:", error);
