@@ -21,7 +21,7 @@ import { devFormat, prodFormat, morganOptions } from "./config/morgan.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import createSocketManager from "./socket/socketManager.js";
-import ProjectRoutes from "./routes/ProjectRoutes.js";
+import projectRoutes from "./routes/ProjectRoutes.js";
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
@@ -51,7 +51,7 @@ app.use(cookieParser());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/projects", ProjectRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

@@ -19,7 +19,7 @@ const ProjectSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [false, "Owner is optional"],
+      required: [true, "Owner is required"],
       index: true,
     },
 
@@ -31,24 +31,6 @@ const ProjectSchema = new mongoose.Schema(
     },
 
     
-    members: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        role: {
-          type: String,
-          enum: ["Admin", "Write", "Read"],
-          default: "Read",
-        },
-        joinedAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
-
     isDeleted: {
       type: Boolean,
       default: false,
