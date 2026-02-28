@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Search } from "lucide-react";
 import { UserListItem } from "./user-list-item";
-import type { SearchResult } from "@/pages/friends/useMain";
+import type { SearchResult } from "@/pages/page/useMain";
 
 type SearchResultsProps = {
   results: SearchResult[] | null;

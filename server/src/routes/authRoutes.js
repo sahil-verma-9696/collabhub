@@ -46,18 +46,4 @@ router.get("/google/oauth2callback", asyncHandler(authController.googleAuth));
  */
 // router.post("/refresh", authController.refreshToken.bind(authController));
 
-/**
- * Auth failed page
- */
-router.get("/failed", (req, res) => {
-  res.status(401).json({ message: "Google authentication failed" });
-});
-
-/**
- * Auth success page
- */
-router.get("/success", (req, res) => {
-  res.json({ message: "Authentication successful", token: req.query.token });
-});
-
 export default router;

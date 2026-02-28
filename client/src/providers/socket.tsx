@@ -7,7 +7,8 @@ export default function SocketContextProvider({
   children: React.ReactNode;
 }) {
   return (
-    <SocketContext.Provider value={useSocket()}>
+    // <SocketContext.Provider value={useSocket()}>
+    <SocketContext.Provider value={{}}>
       {children}
     </SocketContext.Provider>
   );

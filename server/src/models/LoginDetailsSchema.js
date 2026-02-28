@@ -75,4 +75,6 @@ loginDetailsSchema.pre("save", async function (next) {
  */
 const LoginDetails = mongoose.model("LoginDetails", loginDetailsSchema);
 
+LoginDetails.syncIndexes();
+
 export default LoginDetails;

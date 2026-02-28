@@ -5,6 +5,8 @@
 import { Server } from "socket.io";
 import { verifySocketToken } from "../middleware/authMiddleware.js";
 import config from "../config/env.js";
+import logger from "../utils/logger.js";
+import { addOnlineUser, brodcastOnlineUsers, removeOnlineUser } from "./socketService.js";
 
 export default function createSocketManager(server) {
   const io = new Server(server, {
@@ -25,10 +27,27 @@ export default function createSocketManager(server) {
 
     if (!token) return next(new Error("Authentication token required"));
 
-    const user = verifySocketToken(token);
-    if (!user) return next(new Error("Invalid or expired token"));
+    /**
+     * GET browserInfo and deviceId from Client
+     * ----------------------------------------
+     */
+    const { browserInfo, deviceId } = socket.handshake.auth || {};
 
-    socket.userId = user.id;
+    if (!token || !deviceId || !browserInfo)
+      throw new Error(
+        "Invalid credentials. Required token, deviceId and browserInfo.",
+      );
+
+    const user = verifySocketToken(token);
+
+    /**
+     * Attach user to Socket
+     * ---------------------
+     * @description Attach user to Socket in `in-memory`.
+     */
+    socket.data = { userId: user.userId, deviceId, email: user.email };
+
+    socket.userId = user.userId;
     socket.user = user;
 
     next();
@@ -38,7 +57,18 @@ export default function createSocketManager(server) {
    * Event handlers
    */
   io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.user.name} (${socket.userId})`);
+    logger.info(
+      `[ON : connection] :: name: ${socket.user.name} email: ${socket.user.email} userId: ${socket.userId}`,
+    );
+
+    addOnlineUser({
+      userId: socket.userId,
+      deviceId: socket.data.deviceId,
+      browserInfo: socket.data.browserInfo,
+      socketId: socket.id,
+    })
+
+    brodcastOnlineUsers();
 
     socket.on("join-room", (roomId) => {
       socket.join(roomId);
@@ -74,12 +104,13 @@ export default function createSocketManager(server) {
     });
 
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.user.name} (${socket.userId})`);
+      logger.info(
+        `[ON : disconnect] :: name: ${socket.user.name} email: ${socket.user.email} userId: ${socket.userId}`,
+      );
 
-      socket.broadcast.emit("user-disconnected", {
-        userId: socket.userId,
-        userName: socket.user.name,
-      });
+      removeOnlineUser(socket);
+
+      brodcastOnlineUsers();
     });
 
     socket.on("get-room-users", (roomId, callback) => {

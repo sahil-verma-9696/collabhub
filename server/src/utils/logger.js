@@ -27,7 +27,7 @@ const accessLogFile = path.join(logsDir, "access.log");
  * Format timestamp
  */
 function getTimestamp() {
-  return new Date().toISOString();
+  return new Date().toLocaleString("en-Us");
 }
 
 /**
@@ -91,7 +91,7 @@ function debug(message, data = null) {
   if (process.env.NODE_ENV === "development") {
     const timestamp = getTimestamp();
     console.log(`\x1b[35m[${timestamp}] DEBUG: ${message}\x1b[0m`);
-    if (data) console.log(data);
+    if (data) console.log(JSON.stringify(data, null, 4));
   }
 }
 

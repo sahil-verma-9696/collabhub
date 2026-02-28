@@ -48,4 +48,6 @@ const googleTokenSchema = new mongoose.Schema(
 
 const GoogleToken = mongoose.model("GoogleToken", googleTokenSchema);
 
+GoogleToken.syncIndexes();
+
 export default GoogleToken;

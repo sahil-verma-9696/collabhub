@@ -49,9 +49,9 @@ export interface ChatResponse {
  *
  * using network it fetch the chat of a user.
  */
-export default async function getChat(participantId: string) {
+export default async function getChat(chatId: string) {
   return apiFetch<ChatResponse[]>({
-    url: `${SERVER_URL}/chats?participant=${participantId}`,
+    url: `${SERVER_URL}/chats/${chatId}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${localSpace.getAccessToken()}`,

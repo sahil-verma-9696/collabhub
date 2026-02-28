@@ -4,13 +4,19 @@
  * Based on ER Diagram Schema
  */
 
-// import model from "../models/UserSchema.js";
-// import { Types } from "mongoose";
-
+import Chat from "../models/ChatSchema.js";
+import { Types } from "mongoose";
 
 /************************************************************************
  **************************** CREATE ************************************
  ************************************************************************/
+export function create(payload) {
+  return Chat.create({
+    ...payload,
+    project: new Types.ObjectId(payload.project),
+    creator: new Types.ObjectId(payload.creator),
+  });
+}
 /************************************************************************
  **************************** READ **************************************
  ************************************************************************/

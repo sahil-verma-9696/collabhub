@@ -3,17 +3,13 @@ import { HomePage } from "./pages/home";
 import { LandingPage } from "./pages/landing";
 import App from "./App";
 import { LoginPage } from "./pages/login";
-import {
-  AllFriends,
-  FriendRequests,
-  FriendsPage,
-  OnlineFriends,
-  PendingFriends,
-} from "./pages/friends";
+import { PagesPage } from "./pages/page";
 import PrivateLayout from "./private.layout";
 import { SignupPage } from "./pages/signup";
 import { ProfilePage } from "./pages/profile";
 import { ChatPage } from "./pages/chat";
+import { SettingsPage } from "./pages/settings";
+import { DashboardPage } from "./pages/dashboard";
 
 export const workspaceChilds: RouteObject[] = [
   {
@@ -22,19 +18,7 @@ export const workspaceChilds: RouteObject[] = [
   },
   {
     path: ":id",
-    element: <AllFriends />,
-  },
-  {
-    path: "online",
-    element: <OnlineFriends />,
-  },
-  {
-    path: "pending",
-    element: <PendingFriends />,
-  },
-  {
-    path: "friend-requests",
-    element: <FriendRequests />,
+    element: <div>Hello</div>,
   },
 ];
 
@@ -49,7 +33,7 @@ export const protectedChilds: RouteObject[] = [
   },
   {
     path: "workspaces",
-    element: <FriendsPage />,
+    element: <DashboardPage />,
     children: workspaceChilds,
   },
   {
@@ -59,6 +43,18 @@ export const protectedChilds: RouteObject[] = [
   {
     path: "chats/:id",
     element: <ChatPage />,
+  },
+  {
+    path: "pages/:client-id",
+    element: <PagesPage />,
+  },
+  {
+    path: "pages",
+    element: <PagesPage />,
+  },
+  {
+    path: "settings",
+    element: <SettingsPage />,
   },
 ];
 

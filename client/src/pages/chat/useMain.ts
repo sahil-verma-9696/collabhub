@@ -10,7 +10,8 @@ import { messageQueue } from "@/services/message-queue";
 import { SOCKET_EVENTS } from "@/socket.events.constants";
 import chalk from "chalk";
 import React, { useMemo } from "react";
-import { useSearchParams } from "react-router";
+import { useParams } from "react-router";
+import { toast } from "react-toastify";
 
 export const MESSAGE_TYPE = {
   TEXT: "text",
@@ -49,12 +50,10 @@ function prepareMessage(payload: MessagePayload): Message {
 
 export default function useMain() {
   const { socket } = useSocketContext();
-  const [searchParams] = useSearchParams();
+  const { id: chatId } = useParams();
 
   const observerRef = React.useRef<IntersectionObserver | null>(null);
   const observedMessages = React.useRef(new Set<string>());
-
-  const userId = searchParams.get("userId");
 
   const {
     data: chatRes,
@@ -71,8 +70,6 @@ export default function useMain() {
   >(null);
   const [messageHistoryLoading, setMessageHistoryLoading] =
     React.useState(false);
-
-  const chatId = useMemo(() => chatRes?.[0]?.chat._id, [chatRes]);
 
   function listenJoinChat() {
     console.log(chalk.magenta(`[on::${SOCKET_EVENTS.JOIN_CHAT}]`));
@@ -167,20 +164,21 @@ export default function useMain() {
    * -------------------
    */
   React.useEffect(() => {
-    if (!userId) return;
+    if (!chatId) return;
     (async () => {
       try {
         setChatResLoading(true);
-        const res = await getChat(userId);
+        const res = await getChat(chatId);
 
         setChatRes(res);
         setChatResLoading(false);
       } catch (error) {
+        toast((error as Error).message, { type: "error" });
         setChatResError((error as Error).message);
         setChatResLoading(false);
       }
     })();
-  }, []);
+  }, [chatId]);
 
   /**
    * Get Message History of a user's chat via network and message queue

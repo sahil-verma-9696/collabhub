@@ -6,9 +6,11 @@ import { usePageContext } from "./_context";
 export default function ChatPanel() {
   const ctx = usePageContext();
 
-  if (ctx.chatResLoading || !ctx.chatRes) return <div>Loading...</div>;
-
   if (ctx.chatResError) return <div>{ctx.chatResError}</div>;
+
+  if (!ctx.chatRes) return <div>Data not found</div>;
+
+  if (ctx.chatResLoading) return <div>Loading...</div>;
 
   const { participant } = ctx.chatRes[0];
 

@@ -12,12 +12,14 @@ import { PathNameBreadcrumb } from "./components/pathname-breadcrumb";
 import SocketContextProvider from "./providers/socket";
 import AppDataProvider from "./providers/app-data";
 import { RightSidebar } from "./components/right-sidebar";
+import { ToastContainer } from "react-toastify";
 
 export default function PrivateLayout() {
   return (
     <>
       <SocketContextProvider>
         <AppDataProvider>
+          <ToastContainer />
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
@@ -43,8 +45,8 @@ function Header() {
   }
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2">
-      <div className="flex items-center gap-2 px-4">
+    <header className="flex h-16 shrink-0 items-center gap-2 sticky top-0">
+      <div className="flex items-center gap-2 p-4">
         <SidebarTrigger className="-ml-1" />
         <Separator
           orientation="vertical"

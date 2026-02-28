@@ -89,4 +89,6 @@ accountSchema.pre("save", function (next) {
  */
 const Account = mongoose.model("Account", accountSchema);
 
+Account.syncIndexes();
+
 export default Account;

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Field } from "./ui/field";
 import { Button } from "./ui/button";
 import type { User } from "@/services/auth";
-import type { SearchResult } from "@/pages/friends/useMain";
+import type { SearchResult } from "@/pages/page/useMain";
 
 export type SearchProps = {
   query: string;

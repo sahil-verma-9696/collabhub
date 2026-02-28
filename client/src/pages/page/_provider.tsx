@@ -5,7 +5,7 @@ import useMain from "./useMain";
 export default function Provider() {
   return (
     <Context.Provider value={useMain()}>
-      <Page />;
+      <Page />
     </Context.Provider>
   );
 }
