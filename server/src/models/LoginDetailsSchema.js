@@ -44,6 +44,8 @@ const loginDetailsSchema = new mongoose.Schema(
     methods: {
       comparePassword: async function (enteredPassword) {
         try {
+          if (!enteredPassword) throw new Error("Password is required");
+          
           return await bcrypt.compare(enteredPassword, this.password);
         } catch (error) {
           throw error;

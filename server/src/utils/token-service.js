@@ -10,8 +10,6 @@ import config from "../config/env.js";
  * Generate JWT token
  */
 export function generateToken(payload) {
-  console.log("payload", JSON.stringify(payload, null, 4));
-
   const { userId, accountId, email, name } = payload;
 
   if (!userId || !accountId || !email || !name) {

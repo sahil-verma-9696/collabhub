@@ -68,7 +68,38 @@ export async function register(req, res, next) {
   }
 }
 
-export async function login(req, res) {}
+export async function login(req, res) {
+  const { email, password } = req.body || {};
+
+  const user = await userRepo.getByEmail(email);
+
+  if (!user) throw new Error("User not found");
+
+  const account = await accountRepo.getAccountByUserId(user._id);
+
+  if (!account) throw new Error("Account not found");
+
+  const loginDetails = await loginDetailsRepo.getLoginDetailsByAccountId(account._id);
+
+  if (!loginDetails) throw new Error("Login details not found");
+
+  if (loginDetails.authMethod !== AUTH_METHOD.EMAIL)
+    throw new Error("Invalid login method");
+
+  const isPasswordValid = await loginDetails.comparePassword(password);
+
+  if (!isPasswordValid) throw new Error("Invalid password");
+
+  const token = tokenService.generateToken({
+    userId: user._id,
+    accountId: account._id,
+    email: user.email,
+    name: user.name,
+    trialEndAt: account.trialEndAt,
+  });
+
+  return res.status(200).json({ user: user.toJSON(), token });
+}
 
 /**
  * Get Consent of User

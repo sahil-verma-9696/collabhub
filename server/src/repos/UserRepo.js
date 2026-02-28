@@ -22,6 +22,8 @@ export async function getAll() {
 }
 
 export async function getByEmail(email) {
+  if (!email) throw new Error("Email is required");
+  
   return await User.findOne({ email: email.toLowerCase() });
 }
 /************************************************************************

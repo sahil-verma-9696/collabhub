@@ -23,6 +23,8 @@ export async function create(loginDetails, options = {}) {
  **************************** READ **************************************
  ************************************************************************/
 export async function getLoginDetailsByAccountId(accountId) {
+  if (!accountId) throw new Error("Account ID is required");
+  
   return await LoginDetails.findOne({
     account: new Types.ObjectId(accountId),
   });
