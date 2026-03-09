@@ -60,7 +60,6 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
-app.get("/api/projects/:projectId/role", verifyToken, addUserRole, getRole);
 app.use("/api/projects/:projectId/pages", verifyToken, addUserRole, pageRoutes);
 app.use(
   "/api/projects/:projectId/invites",
@@ -108,6 +107,19 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   logger.error("Request error:", err);
+
+  // handle body-parser JSON errors
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({ message: "Invalid JSON payload" });
+  }
+
+  // Mongoose validation errors
+  if (err.name === "ValidationError") {
+    return res.status(400).json({
+      message: err.message,
+      errors: err.errors,
+    });
+  }
 
   res.status(err.status || 500).json({
     message: err.message || "Internal server error",

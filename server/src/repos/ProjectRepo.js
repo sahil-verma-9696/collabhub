@@ -1,25 +1,41 @@
 import Project from "../models/ProjectSchema.js";
+import {ObjectId} from "../utils/ObjectId.js";;
 
 class ProjectRepo {
 
+/************************************************************************
+ **************************** CREATE ************************************
+ ************************************************************************/
   async create(data) {
     return await Project.create(data);
   }
 
+/************************************************************************
+ **************************** FIND ALL  ************************************
+ ************************************************************************/
   async findAll() {
     return await Project.find({ isDeleted: false });
   }
 
+/************************************************************************
+ **************************** FIND BY ID ************************************
+ ************************************************************************/
   async findById(id) {
-    return await Project.findOne({ _id: id, isDeleted: false });
+    return await Project.findOne({ _id: ObjectId(id), isDeleted: false });
   }
 
+/************************************************************************
+ **************************** UPDATE ************************************
+ ************************************************************************/
   async update(id, data) {
-    return await Project.findByIdAndUpdate(id, data, { new: true });
+    return await Project.findByIdAndUpdate(ObjectId(id), data, { new: true });
   }
 
+/************************************************************************
+ **************************** SOFT DELETE ************************************
+ ************************************************************************/
   async softDelete(id) {
-    return await Project.findByIdAndUpdate(id, {
+    return await Project.findByIdAndUpdate(ObjectId(id), {
       isDeleted: true,
     });
   }
