@@ -120,7 +120,7 @@ export function ColumnItem({
             <MoreHorizontal />
           </Badge>
         </div>
-        <p className="text-xs py-1">{task?.description}</p>
+        <p className="text-xs pb-3">{task?.description}</p>
         <div className="flex gap-2 flex-wrap">
           {task?.filters.map((f) => {
             const style: CSSProperties = {
