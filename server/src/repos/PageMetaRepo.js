@@ -41,11 +41,11 @@ export async function getByProjectId(projectId) {
  **************************** UPDATE ************************************
  ************************************************************************/
 
- export async function updateByPageId(pageId, payload, options = {}) {
+export async function updateByPageId(pageId, payload, options = {}) {
   if (!pageId) throw new Error("Page ID is required");
 
   return await Model.updateOne({ page: ObjectId(pageId) }, payload, options);
- }
+}
 /************************************************************************
  **************************** DELETE ************************************
  ************************************************************************/
@@ -56,6 +56,24 @@ export async function softDeleteById(id, deletor, options = {}) {
 
   return await Model.updateOne(
     { _id: id },
+    {
+      $set: {
+        isDeleted: true,
+        deletor: ObjectId(deletor),
+        deletedAt: new Date(),
+      },
+    },
+    options,
+  );
+}
+
+export async function deletedByPageId(pageId, deletor, options = {}) {
+  if (!pageId) throw new Error("Page ID is required");
+
+  if (!deletor) throw new Error("deletor is required");
+
+  return await Model.updateOne(
+    { page: pageId },
     {
       $set: {
         isDeleted: true,

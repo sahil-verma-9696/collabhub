@@ -62,16 +62,15 @@ export const updateById = async (req, res) => {
 };
 
 export const deletePage = async (req, res) => {
+  const pageId = req.params.pageId;
+  const userId = req.user.userId;
+  
   await withTransaction(async (session) => {
-    const page = await pageRepo.getById(req.params.pageId, { session });
-
-    if (!page) throw new Error("Page not found");
-
-    await pageRepo.softDeleteById(page._id, req.user.userId, {
+    await pageRepo.softDeleteById(pageId, userId, {
       session,
     });
 
-    await pageMetaRepo.softDeleteById(page.meta, req.user.userId, { session });
+    await pageMetaRepo.deletedByPageId(pageId, userId, { session });
   });
 
   return res.json({ message: "Page deleted successfully" });
