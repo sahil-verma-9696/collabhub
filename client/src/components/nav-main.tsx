@@ -77,7 +77,7 @@ export function NavMain({
                                 className="ml-auto cursor-pointer"
                                 size={16}
                                 color="red"
-                                onClick={ctx.handleDeletePage(subItem._id)}
+                                onClick={ctx.handleDeletePage(subItem.page)}
                               />
                             </Link>
                           </SidebarMenuSubButton>

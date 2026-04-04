@@ -9,6 +9,7 @@ import type { LoaderData } from "@/loaders/project.loader";
 import postPage, { type PageMeta } from "@/services/post-page";
 import { EMPTY_EDITOR_STATE } from "@/pages/page/use-autosave";
 import getPageMetas from "@/services/get-page-mets";
+import deletePage from "@/services/delete-page";
 
 export type OnlineUser = {
   userId: string;
@@ -58,7 +59,17 @@ export default function useAppData() {
 
   const handleDeletePage = (pageId: string) => async (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log(pageId);
+    e.preventDefault();
+
+    if (!projectId || !pageId) return;
+
+    try {
+      await deletePage(projectId, pageId);
+
+      setPagesMeta((prev) => prev.filter((p) => p.page !== pageId));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // GET Pages meta from network
@@ -74,7 +85,7 @@ export default function useAppData() {
         console.log(error);
       }
     })();
-  }, []);
+  }, [projectId]);
 
   // GET ONLINE FRIENDS
   React.useEffect(() => {
