@@ -69,7 +69,7 @@ export function NavMain({
                         <SidebarMenuSubItem key={subItem._id}>
                           <SidebarMenuSubButton asChild>
                             <Link
-                              to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${projectId}/${ROUTES.PRIVATE.PROJECTS.PAGES}/${subItem._id}`}
+                              to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${projectId}/${ROUTES.PRIVATE.PROJECTS.PAGES}/${subItem.page}`}
                             >
                               <File />
                               <span>{subItem.title}</span>

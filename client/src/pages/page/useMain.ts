@@ -5,24 +5,24 @@ import { useParams } from "react-router";
 import { useAppContext } from "@/contexts/app.context";
 import { scheduleSync } from "@/lib/scheduleSync";
 
-import type { PageMeta } from "@/hooks/use-app-data";
 import type { InitialConfigType } from "@lexical/react/LexicalComposer";
+import type { PageMeta } from "@/services/post-page";
 
 export default function useMain() {
   const editorRef = React.useRef<HTMLElement | null>(null);
   const params = useParams();
   const ctx = useAppContext();
-  const clientId = params["client-id"];
+  const pageId = params["pageId"];
 
   const initialConfig: InitialConfigType = {
-    namespace: `Editor-${clientId}`,
+    namespace: `Editor-${pageId}`,
     onError: console.error,
   };
 
   async function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!clientId) return;
+    if (!pageId) return;
 
-    const savedMeta = await idb.getPageMeta(clientId);
+    const savedMeta = await idb.getPageMeta(pageId);
 
     const updatedAt = Date.now().toString();
 
@@ -33,23 +33,23 @@ export default function useMain() {
 
     ctx.setPagesMeta((prev) =>
       prev.map((page) =>
-        page.clientId === clientId ? { ...page, ...payload } : page,
+        page._id === pageId ? { ...page, ...payload } : page,
       ),
     );
 
     // Save locally
-    await idb.setPageMeta(clientId, { ...savedMeta, ...payload });
+    await idb.setPageMeta(pageId, { ...savedMeta, ...payload });
 
     // Schedule sync
-    scheduleSync(clientId, "UPDATE_META", {
-      clientId,
+    scheduleSync(pageId, "UPDATE_META", {
+      pageId,
       ...payload,
     });
   }
 
   const pageTitle = React.useMemo(
-    () => ctx.pagesMeta.find((page) => page.clientId === clientId)?.title,
-    [clientId, ctx.pagesMeta],
+    () => ctx.pagesMeta.find((page) => page._id === pageId)?.title,
+    [pageId, ctx.pagesMeta],
   );
 
   return {

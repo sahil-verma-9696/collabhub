@@ -1,62 +1,40 @@
 import React from "react";
-import * as idb from "@/lib/editorDB";
 import { useParams } from "react-router";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useAppContext } from "@/contexts/app.context";
-import { scheduleSync } from "@/lib/scheduleSync";
 import type { EditorState } from "lexical";
+import getPage from "@/services/get-page";
 
 export const EMPTY_EDITOR_STATE = `{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}`;
 
 export function useAutosave() {
+  // Editor state
   const [editor] = useLexicalComposerContext();
 
-  const params = useParams();
-
-  const clientId = params["client-id"];
-
-  const ctx = useAppContext();
+  const { projectId, pageId } = useParams();
 
   // Load from IndexedDB on mount
   React.useEffect(() => {
     (async () => {
-      if (!clientId) return;
+      if (!pageId || !projectId) return;
 
-      const payload = await idb.getPage(clientId);
+      const page = await getPage(projectId, pageId);
 
-      const savedState = payload.content ? payload.content : EMPTY_EDITOR_STATE;
+      const content = JSON.parse(page.content || EMPTY_EDITOR_STATE);
 
-      const parsed = editor.parseEditorState(savedState);
+      const parsed = editor.parseEditorState(content);
 
       editor.setEditorState(parsed);
     })();
-  }, [editor, clientId]);
+  }, [editor, pageId, projectId]);
 
   const handleEditorStateChange = async (editorState: EditorState) => {
-    if (!clientId) return;
+    if (!pageId) return;
 
     const json = editorState.toJSON();
+
     const updatedAt = Date.now().toString();
 
-    const savedMeta = await idb.getPageMeta(clientId);
-
-    // 1️⃣ Update local meta state
-    ctx.setPagesMeta((prev) =>
-      prev.map((page) =>
-        page.clientId === clientId ? { ...page, updatedAt } : page,
-      ),
-    );
-
-    // 2️⃣ Save to IndexedDB (IMPORTANT - you must implement this)
-    await idb.setPageMeta(clientId, { ...savedMeta, updatedAt });
-    await idb.setPage(clientId, json);
-
-    // 3️⃣ Schedule server sync
-    scheduleSync(clientId, "UPDATE_PAGE", {
-      clientId,
-      content: json,
-      updatedAt,
-    });
+    console.log(json, updatedAt);
   };
 
   return {
