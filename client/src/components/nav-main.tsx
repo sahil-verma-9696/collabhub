@@ -65,7 +65,7 @@ export function NavMain({
 
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {ctx.pagesMetaSortByUpdatedAt?.map((subItem) => (
+                      {ctx.pagesMeta?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem._id}>
                           <SidebarMenuSubButton asChild>
                             <Link

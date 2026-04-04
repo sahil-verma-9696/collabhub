@@ -1,5 +1,5 @@
 import React from "react";
-import * as idb from "@/lib/editorDB";
+// import * as idb from "@/lib/editorDB";
 
 import { useParams } from "react-router";
 import { useAppContext } from "@/contexts/app.context";
@@ -7,12 +7,12 @@ import { scheduleSync } from "@/lib/scheduleSync";
 
 import type { InitialConfigType } from "@lexical/react/LexicalComposer";
 import type { PageMeta } from "@/services/post-page";
+import patchPage from "@/services/patch-page";
 
 export default function useMain() {
   const editorRef = React.useRef<HTMLElement | null>(null);
-  const params = useParams();
+  const { pageId, projectId } = useParams();
   const ctx = useAppContext();
-  const pageId = params["pageId"];
 
   const initialConfig: InitialConfigType = {
     namespace: `Editor-${pageId}`,
@@ -20,9 +20,9 @@ export default function useMain() {
   };
 
   async function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!pageId) return;
+    if (!pageId || !projectId) return;
 
-    const savedMeta = await idb.getPageMeta(pageId);
+    // const savedMeta = await idb.getPageMeta(pageId);
 
     const updatedAt = Date.now().toString();
 
@@ -32,13 +32,17 @@ export default function useMain() {
     };
 
     ctx.setPagesMeta((prev) =>
-      prev.map((page) =>
-        page._id === pageId ? { ...page, ...payload } : page,
+      prev.map((meta) =>
+        meta.page === pageId ? { ...meta, ...payload } : meta,
       ),
     );
 
-    // Save locally
-    await idb.setPageMeta(pageId, { ...savedMeta, ...payload });
+    await patchPage(projectId, pageId, {
+      meta: {
+        title: e.target.value,
+      },
+      page: {},
+    });
 
     // Schedule sync
     scheduleSync(pageId, "UPDATE_META", {
@@ -48,7 +52,7 @@ export default function useMain() {
   }
 
   const pageTitle = React.useMemo(
-    () => ctx.pagesMeta.find((page) => page._id === pageId)?.title,
+    () => ctx.pagesMeta.find((meta) => meta.page === pageId)?.title,
     [pageId, ctx.pagesMeta],
   );
 
