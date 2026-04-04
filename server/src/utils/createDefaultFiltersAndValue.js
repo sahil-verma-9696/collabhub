@@ -11,11 +11,6 @@ export async function createDefaultFiltersAndValue(projectId, userId) {
       description: "Filter task by status",
       values: [
         {
-          name: "To Do",
-          description: "Task to do",
-          color: "#FF0000",
-        },
-        {
           name: "In Progress",
           description: "Task in progress",
           color: "#FFFF00",

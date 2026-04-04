@@ -6,6 +6,8 @@
 
 import Model from "../models/PageSchema.js";
 import { ObjectId } from "../utils/ObjectId.js";
+import { handleMongoDbErrors } from "../utils/handleMongoDBError.js";
+
 
 /************************************************************************
  **************************** CREATE ************************************
@@ -13,10 +15,9 @@ import { ObjectId } from "../utils/ObjectId.js";
 export async function create(payload, options = {}) {
   const doc = new Model({
     ...payload,
-    meta: ObjectId(payload.meta),
   });
 
-  return await doc.save(options);
+  return await handleMongoDbErrors(() => doc.save(options));
 }
 /************************************************************************
  **************************** READ **************************************
@@ -29,20 +30,12 @@ export async function getById(id, options = { session: null }) {
   );
 }
 
-export async function getByMeta(metaId, options = { session: null }) {
-  if (!metaId) throw new Error("meta is required");
-
-  return await Model.findOne({
-    meta: ObjectId(metaId),
-    isDeleted: false,
-  }).session(options.session);
-}
 /************************************************************************
  **************************** UPDATE ************************************
  ************************************************************************/
 export async function updateById(id, payload, options = {}) {
   if (!id) throw new Error("Page ID is required");
-  
+
   return await Model.updateOne({ _id: id }, payload, { new: true }, options);
 }
 /************************************************************************

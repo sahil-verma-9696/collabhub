@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { darkenColor } from "@/utils/darkenColor";
 import { Settings, Trash } from "lucide-react";
-import type { CSSProperties } from "react";
 import { usePageContext } from "../_context";
+import type { CSSProperties } from "react";
 import type { Response } from "@/services/get-tasks";
 
 export function RightInfoSheet({ task }: { task: Response }) {

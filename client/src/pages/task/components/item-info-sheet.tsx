@@ -1,4 +1,5 @@
-import { Separator } from "@/components/ui/separator";
+import React from "react";
+import patchTask from "@/services/patch-task";
 import {
   Sheet,
   SheetContent,
@@ -6,17 +7,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import React from "react";
+import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import type { Response } from "@/services/get-tasks";
 import { usePageContext } from "../_context";
 import { Input } from "@/components/ui/input";
-import patchTask from "@/services/patch-task";
-import { useTaskInfoSheet } from "../useTaskInfoSheet";
 import { LeftInfoSheet } from "./left-info-sheet";
 import { RightInfoSheet } from "./right-info-sheet";
+import type { Response } from "@/services/get-tasks";
 
 export type ItemInfoSheetProps = React.HTMLAttributes<HTMLDivElement> & {
   task?: Response;
@@ -24,8 +23,6 @@ export type ItemInfoSheetProps = React.HTMLAttributes<HTMLDivElement> & {
 
 export function ItemInfoSheet({ children, task }: ItemInfoSheetProps) {
   const [open, setOpen] = React.useState(false);
-
-  useTaskInfoSheet();
 
   if (!task) return null;
 
@@ -37,11 +34,9 @@ export function ItemInfoSheet({ children, task }: ItemInfoSheetProps) {
           <ScrollArea className="h-screen">
             <div>
               <SheetHeader className="p-6">
-                <>
-                  <SheetTitle className="flex gap-1 items-center pr-6">
-                    <TaskTitle taskId={task._id} taskTitle={task.title} />
-                  </SheetTitle>
-                </>
+                <SheetTitle className="flex gap-1 items-center pr-6">
+                  <TaskTitle taskId={task._id} taskTitle={task.title} />
+                </SheetTitle>
               </SheetHeader>
 
               <Separator />

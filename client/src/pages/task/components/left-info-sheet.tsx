@@ -1,12 +1,13 @@
+import React from "react";
+import patchTask from "@/services/patch-task";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Pencil } from "lucide-react";
-import React from "react";
 import { usePageContext } from "../_context";
-import patchTask from "@/services/patch-task";
 import type { Task } from "@/services/post-task";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function LeftInfoSheet({ task }: { task: Task }) {
   const [isEditDescription, setIsEditDescription] = React.useState(false);
@@ -19,7 +20,11 @@ export function LeftInfoSheet({ task }: { task: Task }) {
     <Card className="w-[70%] p-6 shadow-none border-none">
       <Card className="p-2   block">
         <CardHeader className="block p-2!">
-          <CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
             Sahil Verma{" "}
             <span className="text-gray-500">
               created on {new Date(task.createdAt || "").toLocaleDateString()}
@@ -38,6 +43,47 @@ export function LeftInfoSheet({ task }: { task: Task }) {
           />
         </CardContent>
       </Card>
+
+      <div className="space-y-2">
+        <div className="flex gap-3">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>{"CN"}</AvatarFallback>
+          </Avatar>
+
+          <div className="flex-1">
+            <div className="bg-gray-100 rounded-xl p-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm">{"Sahil Verma"}</span>
+                <span className="text-xs text-gray-500">
+                  {new Date().toLocaleString()}
+                </span>
+              </div>
+
+              <p className="text-sm text-gray-800 mt-1">This is good man</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>{"CN"}</AvatarFallback>
+          </Avatar>
+
+          <div className="flex-1">
+            <div className="bg-gray-100 rounded-xl p-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm">{"Sahil Verma"}</span>
+                <span className="text-xs text-gray-500">
+                  {new Date().toLocaleString()}
+                </span>
+              </div>
+
+              <p className="text-sm text-gray-800 mt-1">This is good man</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-4">
         <Label>Add a Comment</Label>

@@ -5,8 +5,8 @@
  */
 
 import Model from "../models/PageMetaSchema.js";
-import mongoose from "mongoose";
 import { ObjectId } from "../utils/ObjectId.js";
+import { handleMongoDbErrors } from "../utils/handleMongoDBError.js";
 
 /************************************************************************
  **************************** CREATE ************************************
@@ -19,7 +19,7 @@ export async function create(payload, options = {}) {
     page: ObjectId(payload.page),
   });
 
-  return await doc.save(options);
+  return await handleMongoDbErrors(() => doc.save(options));
 }
 /************************************************************************
  **************************** READ **************************************
@@ -33,7 +33,7 @@ export async function getById(id, options = { session: null }) {
 }
 
 export async function getByProjectId(projectId) {
-  if (!projectId) throw new Error("Project ID is required");
+  if (!projectId) throw new Error("projectId is required");
 
   return await Model.find({ project: ObjectId(projectId), isDeleted: false });
 }

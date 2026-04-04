@@ -7,10 +7,6 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    clientId: {
-      type: String,
-      required: [true, "clientId is required"],
-    },
     title: {
       type: String,
       required: [true, "title is required"],
@@ -30,6 +26,7 @@ const schema = new mongoose.Schema(
       required: [true, "creator is required"],
       ref: "User",
     },
+    
     isDeleted: {
       type: Boolean,
       default: false,

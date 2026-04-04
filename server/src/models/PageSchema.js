@@ -7,10 +7,6 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    clientId: {
-      type: String,
-      required: [true, "clientId is required"],
-    },
     content: {
       type: Object,
       required: [true, "content is required"],
