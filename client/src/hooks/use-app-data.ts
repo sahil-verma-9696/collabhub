@@ -1,13 +1,14 @@
 import React from "react";
 import chalk from "chalk";
-import * as idb from "@/lib/editorDB";
 import { SOCKET_EVENTS } from "@/socket.events.constants";
 import { useSocketContext } from "@/contexts/socket.context";
 import { useMessanger } from "./use-messanger";
 import { processQueue } from "@/lib/processQueue";
-import { scheduleSync } from "@/lib/scheduleSync";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import type { LoaderData } from "@/loaders/project.loader";
+import postPage, { type PageMeta } from "@/services/post-page";
+import { EMPTY_EDITOR_STATE } from "@/pages/page/use-autosave";
+import getPageMetas from "@/services/get-page-mets";
 
 export type OnlineUser = {
   userId: string;
@@ -15,16 +16,8 @@ export type OnlineUser = {
   devices: number;
 };
 
-export type PageMeta = {
-  title: string;
-  clientId: string;
-  createdAt: string;
-  updatedAt: string;
-  _id: string;
-};
-
 export default function useAppData() {
-  // const { projectId } = useParams();
+  const { projectId } = useParams();
   const [onlineUsers, setOnlineUsers] = React.useState<OnlineUser[]>([]);
   const [pagesMeta, setPagesMeta] = React.useState<PageMeta[]>([]);
 
@@ -49,43 +42,37 @@ export default function useAppData() {
   const handleCreateNewPage = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const now = Date.now().toString();
+    if (!projectId) return;
 
-    const meta = {
-      _id: "",
-      clientId: crypto.randomUUID(),
-      title: "New Page",
-      createdAt: now,
-      updatedAt: now,
-    };
+    const res = await postPage(projectId, {
+      meta: {
+        title: "New Page",
+      },
+      page: {
+        content: EMPTY_EDITOR_STATE,
+      },
+    });
 
-    setPagesMeta((prev) => [...prev, meta]);
-
-    scheduleSync(meta.clientId, "UPDATE_META", meta);
-
-    // Save Meta To IndexedDB
-    await idb.createPageMetaWithPage(meta);
+    setPagesMeta((prev) => [...prev, res.meta]);
   };
 
-  const handleDeletePage =
-    (clientId: string) => async (e: React.MouseEvent) => {
-      e.stopPropagation();
+  const handleDeletePage = (pageId: string) => async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log(pageId);
+  };
 
-      setPagesMeta((prev) => prev.filter((page) => page.clientId !== clientId));
-
-      await idb.deletePageMetaAndPage(clientId);
-
-      scheduleSync(clientId, "DELETE_PAGE", {
-        clientId,
-      });
-    };
-
-  // GET Pages meta from idb
+  // GET Pages meta from network
   React.useEffect(() => {
     (async () => {
-      const pageMetas = await idb.getPageMetas();
+      if (!projectId) return;
 
-      setPagesMeta(pageMetas);
+      try {
+        const pageMetas = await getPageMetas(projectId);
+
+        setPagesMeta(pageMetas as PageMeta[]);
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, []);
 

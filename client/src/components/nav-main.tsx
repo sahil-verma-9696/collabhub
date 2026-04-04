@@ -66,10 +66,10 @@ export function NavMain({
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {ctx.pagesMetaSortByUpdatedAt?.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.clientId}>
+                        <SidebarMenuSubItem key={subItem._id}>
                           <SidebarMenuSubButton asChild>
                             <Link
-                              to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${projectId}/${ROUTES.PRIVATE.PROJECTS.PAGES}/${subItem.clientId}`}
+                              to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${projectId}/${ROUTES.PRIVATE.PROJECTS.PAGES}/${subItem._id}`}
                             >
                               <File />
                               <span>{subItem.title}</span>
@@ -77,7 +77,7 @@ export function NavMain({
                                 className="ml-auto cursor-pointer"
                                 size={16}
                                 color="red"
-                                onClick={ctx.handleDeletePage(subItem.clientId)}
+                                onClick={ctx.handleDeletePage(subItem._id)}
                               />
                             </Link>
                           </SidebarMenuSubButton>

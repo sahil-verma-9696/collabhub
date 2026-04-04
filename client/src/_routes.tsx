@@ -105,10 +105,10 @@ const router = createBrowserRouter([
                     children: [
                       {
                         index: true,
-                        element: <Navigate to=":client-id" replace />,
+                        element: <Navigate to=":pageId" replace />,
                       },
                       {
-                        path: ":client-id",
+                        path: ":pageId",
                         element: <PagesPage />,
                       },
                     ],

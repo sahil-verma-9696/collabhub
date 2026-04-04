@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema(
   {
     content: {
-      type: Object,
+      type: String,
       required: [true, "content is required"],
     },
     
