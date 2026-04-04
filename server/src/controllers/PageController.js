@@ -11,15 +11,11 @@ export const create = async (req, res) => {
   const pagePayload = req.body.page;
 
   await withTransaction(async (session) => {
-
     if (!projectId) throw new Error("projectId is required");
     if (!metaPayload) throw new Error("req.body.meta is required");
     if (!pagePayload) throw new Error("req.body.page is required");
 
-    page = await pageRepo.create(
-      { ...pagePayload },
-      { session },
-    );
+    page = await pageRepo.create({ ...pagePayload }, { session });
 
     meta = await pageMetaRepo.create(
       {
@@ -30,8 +26,6 @@ export const create = async (req, res) => {
       },
       { session },
     );
-
-    
   });
 
   return res.status(201).json({ page, meta });
@@ -42,12 +36,25 @@ export const getPagesMetaByProjectId = async (req, res) => {
   return res.json(pagesMeta);
 };
 
-export const getPageById = async (req,res)=>{
+export const getPageById = async (req, res) => {
   const projectId = req.params.projectId;
   const pageId = req.params.pageId;
   const page = await pageRepo.getById(pageId);
   return res.json(page);
-}
+};
+
+export const updateByPageId = async (req, res) => {
+  const projectId = req.params.projectId;
+  const pageId = req.params.pageId;
+
+  const metaPayload = req.body.meta;
+  const pagePayload = req.body.page;
+
+  const pageMeta = await pageMetaRepo.updateByPageId(pageId, metaPayload);
+  const page = await pageRepo.updateById(pageId, pagePayload);
+
+  return res.json({ page, pageMeta });
+};
 
 export const updateById = async (req, res) => {
   const page = await pageRepo.updateById(req.params.pageId, req.body);

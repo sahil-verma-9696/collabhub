@@ -62,6 +62,7 @@ router.get("/", asyncHandler(controller.getPagesMetaByProjectId));
 
 router.get("/:pageId", asyncHandler(controller.getPageById));
 
+router.patch("/:pageId", asyncHandler(controller.updateByPageId));
 /**
  * @swagger
  * /api/projects/{projectId}/pages/{pageId}:

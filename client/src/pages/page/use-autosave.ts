@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import type { EditorState } from "lexical";
 import getPage from "@/services/get-page";
+import patchPage from "@/services/patch-page";
 
 export const EMPTY_EDITOR_STATE = `{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}`;
 
@@ -28,13 +29,22 @@ export function useAutosave() {
   }, [editor, pageId, projectId]);
 
   const handleEditorStateChange = async (editorState: EditorState) => {
-    if (!pageId) return;
+    if (!pageId || !projectId) return;
 
     const json = editorState.toJSON();
 
     const updatedAt = Date.now().toString();
 
     console.log(json, updatedAt);
+
+    await patchPage(projectId, pageId, {
+      meta: {
+        updatedAt,
+      },
+      page: {
+        content: JSON.stringify(json),
+      },
+    });
   };
 
   return {
