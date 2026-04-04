@@ -5,18 +5,16 @@ import { withTransaction } from "../utils/withTransaction.js";
 export const create = async (req, res) => {
   let page, meta;
 
+  const currentUserId = req.user.userId;
+  const projectId = req.params.projectId;
+  const metaPayload = req.body.meta;
+  const pagePayload = req.body.page;
+
   await withTransaction(async (session) => {
-    const currentUserId = req.user.userId;
-    const projectId = req.params.projectId;
-    const metaPayload = req.body.meta;
-    const pagePayload = req.body.page;
 
     if (!projectId) throw new Error("projectId is required");
     if (!metaPayload) throw new Error("req.body.meta is required");
     if (!pagePayload) throw new Error("req.body.page is required");
-
-    if (metaPayload.clientId !== pagePayload.clientId)
-      throw new Error("clientId mismatch");
 
     page = await pageRepo.create(
       { ...pagePayload },
@@ -39,21 +37,17 @@ export const create = async (req, res) => {
   return res.status(201).json({ page, meta });
 };
 
-export const getPages = async (req, res, next) => {
-  const meta = req.query.meta;
-
-  if (!meta) return next();
-
-  const metaDoc = await pageMetaRepo.getById(meta);
-  const page = await pageRepo.getById(metaDoc.page);
-
-  return res.json(page);
-};
-
 export const getPagesMetaByProjectId = async (req, res) => {
   const pagesMeta = await pageMetaRepo.getByProjectId(req.params.projectId);
   return res.json(pagesMeta);
 };
+
+export const getPageById = async (req,res)=>{
+  const projectId = req.params.projectId;
+  const pageId = req.params.pageId;
+  const page = await pageRepo.getById(pageId);
+  return res.json(page);
+}
 
 export const updateById = async (req, res) => {
   const page = await pageRepo.updateById(req.params.pageId, req.body);

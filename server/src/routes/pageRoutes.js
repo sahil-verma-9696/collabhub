@@ -58,7 +58,9 @@ router.post("/", adminGaurd, asyncHandler(controller.create));
  *       200:
  *         description: List of pages
  */
-router.get("/", asyncHandler(controller.getPages));
+router.get("/", asyncHandler(controller.getPagesMetaByProjectId));
+
+router.get("/:pageId", asyncHandler(controller.getPageById));
 
 /**
  * @swagger
