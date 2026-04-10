@@ -8,7 +8,7 @@ import { apiFetch } from "@/utils/api-fetch";
 
 export type Page = {
   _id: string;
-  content: string;
+  content: string | null;
   isDeleted: boolean;
   deletor: string | null;
   deletedAt: string | null;

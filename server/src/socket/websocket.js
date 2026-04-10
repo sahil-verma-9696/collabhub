@@ -1,5 +1,6 @@
 import { YSocketIO } from "y-socket.io/dist/server";
 import * as Y from "yjs";
+import * as PageRepo from "../repos/PageRepo.js";
 
 function extractText(node) {
   if (typeof node === "string") return node;
@@ -23,26 +24,32 @@ export function YSocket(socket) {
   const ysocketio = new YSocketIO(socket);
 
   // 📄 Document created
-  ysocketio.on("document-loaded", (doc) => {
-    console.log("📄 Document loaded:", doc.name);
+  ysocketio.on("document-loaded", async (doc) => {
+    console.log("📄 Loading:", doc.name);
+
+    const page = await PageRepo.getById(doc.name);
+
+    if (page?.content) {
+      Y.applyUpdate(doc, new Uint8Array(page.content));
+      console.log("✅ Restored from DB");
+    } else {
+      console.log("🆕 New document");
+    }
   });
 
   // ✏️ Document updated
-  ysocketio.on("document-update", (doc, update) => {
+  ysocketio.on("document-update", async (doc, update) => {
     Y.applyUpdate(doc, update);
 
-    const yXml = doc.getXmlFragment("root");
-    const json = yXml.toJSON();
+    // 🔥 encode full state
+    const snapshot = Y.encodeStateAsUpdate(doc);
 
-    console.log("========== UPDATE ==========");
-    console.log("Doc:", doc.name);
+    // doc.name = your pageId
+    await PageRepo.updateById(doc.name, {
+      content: Buffer.from(snapshot),
+    });
 
-    // ✅ Proper structured output
-    console.dir(json, { depth: null });
-
-    // ✅ Extract readable text
-    const text = extractText(json);
-    console.log("📝 Plain Text:", text);
+    console.log("💾 Snapshot saved to Page:", doc.name);
   });
 
   // 👥 Awareness (users / cursors)

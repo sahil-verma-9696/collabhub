@@ -7,7 +7,7 @@ import { processQueue } from "@/lib/processQueue";
 import { useLoaderData, useParams } from "react-router";
 import type { LoaderData } from "@/loaders/project.loader";
 import postPage, { type PageMeta } from "@/services/post-page";
-import { EMPTY_EDITOR_STATE } from "@/pages/page/use-autosave";
+// import { EMPTY_EDITOR_STATE } from "@/pages/page/use-autosave";
 import getPageMetas from "@/services/get-page-mets";
 import deletePage from "@/services/delete-page";
 
@@ -50,7 +50,7 @@ export default function useAppData() {
         title: "New Page",
       },
       page: {
-        content: EMPTY_EDITOR_STATE,
+        content: null,
       },
     });
 

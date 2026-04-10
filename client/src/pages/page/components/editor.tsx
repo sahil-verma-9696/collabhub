@@ -9,8 +9,11 @@ import { LexicalCollaboration } from "@lexical/react/LexicalCollaborationContext
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { SocketIOProvider } from "y-socket.io";
 import type { Provider } from "@lexical/yjs";
+import { useParams } from "react-router";
 
 export const Editor = function Editor() {
+  const { pageId } = useParams();
+
   const initialConfig = {
     // NOTE: This is critical for collaboration plugin to set editor state to null. It
     // would indicate that the editor should not try to set any default state
@@ -47,7 +50,7 @@ export const Editor = function Editor() {
         "ws://localhost:3000",
         id,
         doc,
-        {}
+        {},
       ) as unknown as Provider;
     },
     [],
@@ -64,7 +67,7 @@ export const Editor = function Editor() {
           />
           <HistoryPlugin />
           <CollaborationPlugin
-            id="lexical/react-rich-collab"
+            id={pageId!}
             providerFactory={providerFactory}
             shouldBootstrap={true}
           />
