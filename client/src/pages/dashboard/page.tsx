@@ -18,9 +18,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePageContext } from "./_context";
+import React from "react";
+import { Await, Link } from "react-router";
+import { useAppContext } from "@/contexts/app.context";
+import { ROUTES } from "@/_routes.constants";
 // import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
+  const ctx = usePageContext();
+  const appCtx = useAppContext();
+
   const recentActivities = [
     {
       id: 1,
@@ -71,7 +80,7 @@ export default function Page() {
     },
   ];
 
-  const getActivityIcon = (type : string) => {
+  const getActivityIcon = (type: string) => {
     switch (type) {
       case "task_completed":
         return <CheckCircle2 className="w-4 h-4 text-green-500" />;
@@ -104,14 +113,14 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <ScrollArea className="flex flex-col h-screen">
       <main className="flex-1 p-4 lg:p-6 overflow-auto">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Welcome Section */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-black">
-                Welcome back, John!
+                Welcome back, {ctx.user?.name}!
               </h1>
               <p className="text-white-200">
                 {"Here's what's happening with your projects today."}
@@ -130,7 +139,7 @@ export default function Page() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Modules
+                  Total Channels
                 </CardTitle>
                 <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -175,12 +184,16 @@ export default function Page() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">12</div>
+                <div className="text-2xl font-bold">
+                  {appCtx.pagesMeta.length}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   +1 from yesterday
                 </p>
               </CardContent>
             </Card>
+
+            {/* Team Members */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -189,9 +202,26 @@ export default function Page() {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">8</div>
+                <div className="text-2xl font-bold">
+                  <React.Suspense fallback={<div>Loading...</div>}>
+                    <Await resolve={appCtx.loaderData.members}>
+                      {(members) => {
+                        return (
+                          <>
+                            {members.length}/
+                            <React.Suspense fallback={<div>Loading...</div>}>
+                              <Await resolve={appCtx.loaderData.project}>
+                                {(project) => <>{project.teamLimit}</>}
+                              </Await>
+                            </React.Suspense>
+                          </>
+                        );
+                      }}
+                    </Await>
+                  </React.Suspense>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Active this week
+                  Total team members
                 </p>
               </CardContent>
             </Card>
@@ -199,9 +229,9 @@ export default function Page() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Activities */}
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
+            <Card className="h-118 lg:col-span-2">
+              <ScrollArea className="h-100 lg:col-span-2">
+                <CardHeader className="sticky top-0 bg-white pb-4">
                   <CardTitle>Recent Activities</CardTitle>
                   <CardDescription>
                     Stay updated with the latest changes and updates
@@ -251,8 +281,8 @@ export default function Page() {
                     </div>
                   ))}
                 </CardContent>
-              </Card>
-            </div>
+              </ScrollArea>
+            </Card>
 
             {/* Quick Actions & Upcoming */}
             <div className="space-y-6">
@@ -261,13 +291,17 @@ export default function Page() {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start bg-transparent"
+                  <Link
+                    to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${ctx.projectId}/${ROUTES.PRIVATE.PROJECTS.TASKS}`}
                   >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Task
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start bg-transparent cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create New Task
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     className="w-full justify-start bg-transparent"
@@ -282,52 +316,78 @@ export default function Page() {
                     <Calendar className="w-4 h-4 mr-2" />
                     Schedule Meeting
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start bg-transparent"
+                  <Link
+                    to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${ctx.projectId}/${ROUTES.PRIVATE.PROJECTS.SETTINGS.ROOT}/${ROUTES.PRIVATE.PROJECTS.SETTINGS.ACCESS_CONTROL}`}
                   >
-                    <Users className="w-4 h-4 mr-2" />
-                    Invite Team Member
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start bg-transparent cursor-pointer"
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Invite Team Member
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="h-45">
                 <CardHeader>
                   <CardTitle>Upcoming Deadlines</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Database Migration</p>
-                      <p className="text-xs text-gray-500">Due tomorrow</p>
+                <ScrollArea className="h-25">
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          Database Migration
+                        </p>
+                        <p className="text-xs text-gray-500">Due tomorrow</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">
-                        User Research Report
-                      </p>
-                      <p className="text-xs text-gray-500">Due in 2 days</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          User Research Report
+                        </p>
+                        <p className="text-xs text-gray-500">Due in 2 days</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">
-                        Design System Review
-                      </p>
-                      <p className="text-xs text-gray-500">Due in 5 days</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          Design System Review
+                        </p>
+                        <p className="text-xs text-gray-500">Due in 5 days</p>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          Design System Review
+                        </p>
+                        <p className="text-xs text-gray-500">Due in 5 days</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          Design System Review
+                        </p>
+                        <p className="text-xs text-gray-500">Due in 5 days</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </ScrollArea>
               </Card>
             </div>
           </div>
         </div>
       </main>
-    </div>
+    </ScrollArea>
   );
 }

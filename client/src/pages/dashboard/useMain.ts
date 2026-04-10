@@ -1,15 +1,13 @@
-import { useLoaderData, useParams } from "react-router";
+import localSpace from "@/services/local-space";
+import { useParams } from "react-router";
 
 export default function useMain() {
   const { projectId } = useParams();
 
-  const data = useLoaderData();
-
-  console.log("ctx", data);
-
-  console.log(projectId);
+  const user = localSpace.getUser();
 
   return {
     projectId,
+    user,
   };
 }
