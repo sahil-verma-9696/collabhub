@@ -33,6 +33,7 @@ import inviteRoutes from "./routes/inviteRoutes.js";
 import memberRotues from "./routes/memberRoutes.js";
 
 import { AuthGuard, memberGaurd } from "./middleware/authMiddleware.js";
+import { YSocket } from "./socket/websocket.js";
 
 // Initialize Express app
 const app = express();
@@ -40,6 +41,8 @@ const server = http.createServer(app);
 
 // Initialize Socket.io
 const socketManager = createSocketManager(server);
+
+YSocket(socketManager.getIO());
 
 // Middleware
 app.use(
