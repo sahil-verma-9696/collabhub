@@ -33,7 +33,7 @@ import inviteRoutes from "./routes/inviteRoutes.js";
 import memberRotues from "./routes/memberRoutes.js";
 
 import { AuthGuard, memberGaurd } from "./middleware/authMiddleware.js";
-import { YSocket } from "./socket/websocket.js";
+import { YSocket } from "./socket/YSocket.js";
 
 // Initialize Express app
 const app = express();

@@ -129,7 +129,7 @@ router.post("/", memberGaurd, adminGaurd, controller.create);
  *       403:
  *         description: Forbidden - Not a project member
  */
-router.get("/", memberGaurd, adminGaurd, controller.getInvites);
+router.get("/",  controller.getInvites);
 
 /**
  * @swagger
