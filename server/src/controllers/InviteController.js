@@ -6,6 +6,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { sendInviteEmail } from "../utils/email.service.js";
 import { PROJECT_ROLE } from "../common/constants.js";
 import { withTransaction } from "../utils/withTransaction.js";
+import { recordActivity } from "../utils/activityLogger.js";
 
 /**
  * Create Invite with email
@@ -56,6 +57,15 @@ export const create = asyncHandler(async (req, res) => {
   // Async send email
   sendInviteEmail(email, inviteCode, projectId);
 
+  await recordActivity({
+    projectId,
+    userId: req.user.userId,
+    action: "created invite",
+    resourceType: "invite",
+    resourceId: invite._id,
+    details: { email, role: role ?? PROJECT_ROLE.READ },
+  });
+
   return res.status(201).json(invite);
 });
 
@@ -70,7 +80,7 @@ export const getInvites = asyncHandler(async (req, res, next) => {
 
   let invites = await inviteRepo.getByFilter({
     ...query,
-    project: projectId
+    project: projectId,
   });
 
   return res.json(invites);
@@ -154,6 +164,15 @@ export const accept = asyncHandler(async (req, res) => {
     });
   }
 
+  await recordActivity({
+    projectId: payload.project,
+    userId: req.user.userId,
+    action: "accepted invite",
+    resourceType: "invite",
+    resourceId: invites[0]._id,
+    details: { role: payload.role, email: payload.email },
+  });
+
   res.status(200).json(newMember);
 });
 
@@ -162,5 +181,14 @@ export const accept = asyncHandler(async (req, res) => {
  */
 export const deleteById = asyncHandler(async (req, res) => {
   await inviteRepo.softDeleteById(req.params.inviteId, req.user.userId);
+
+  await recordActivity({
+    projectId: req.params.projectId,
+    userId: req.user.userId,
+    action: "deleted invite",
+    resourceType: "invite",
+    resourceId: req.params.inviteId,
+  });
+
   return res.json({ message: "Invite deleted successfully" });
 });

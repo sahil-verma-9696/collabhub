@@ -20,65 +20,121 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePageContext } from "./_context";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Await, Link } from "react-router";
 import { useAppContext } from "@/contexts/app.context";
+import { useSocketContext } from "@/contexts/socket.context";
+import { SOCKET_EVENTS } from "@/socket.events.constants";
 import { ROUTES } from "@/_routes.constants";
+import getActivities, { type Activity } from "@/services/get-activities";
 // import { SidebarProvider } from "@/components/ui/sidebar";
+
+const ACTIVITY_PRIORITY_STYLES: Record<string, string> = {
+  urgent: "bg-red-100 text-red-800 border-red-200",
+  high: "bg-orange-100 text-orange-800 border-orange-200",
+  medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  low: "bg-green-100 text-green-800 border-green-200",
+};
+
+function formatRelativeTime(dateString: string) {
+  const createdAt = new Date(dateString).getTime();
+  const now = Date.now();
+  const diff = now - createdAt;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (hours < 24) return `${hours} hr ago`;
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+}
 
 export default function Page() {
   const ctx = usePageContext();
   const appCtx = useAppContext();
+  const { socket } = useSocketContext();
 
-  const recentActivities = [
-    {
-      id: 1,
-      type: "task_completed",
-      title: "Completed 'Design System Updates'",
-      description:
-        "Finished updating the component library with new design tokens",
-      time: "2 minutes ago",
-      user: "You",
-      priority: "high",
-    },
-    {
-      id: 2,
-      type: "page_created",
-      title: "Created new page 'Product Roadmap'",
-      description: "Added comprehensive roadmap for Q1 2024 planning",
-      time: "15 minutes ago",
-      user: "Sarah Chen",
-      priority: "medium",
-    },
-    {
-      id: 3,
-      type: "task_assigned",
-      title: "Assigned 'User Research Analysis'",
-      description: "Task assigned to Marketing team for completion by Friday",
-      time: "1 hour ago",
-      user: "Mike Johnson",
-      priority: "high",
-    },
-    {
-      id: 4,
-      type: "comment_added",
-      title: "New comment on 'API Documentation'",
-      description: "Alex added feedback on the authentication section",
-      time: "2 hours ago",
-      user: "Alex Rivera",
-      priority: "low",
-    },
-    {
-      id: 5,
-      type: "task_overdue",
-      title: "Task overdue: 'Database Migration'",
-      description:
-        "Critical task is now 1 day overdue and needs immediate attention",
-      time: "3 hours ago",
-      user: "System",
-      priority: "urgent",
-    },
-  ];
+  type DashboardActivity = {
+    _id: string;
+    title: string;
+    description: string;
+    time: string;
+    user: string;
+    priority: string;
+    resourceType: string | null;
+  };
+
+  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(true);
+  const [activityError, setActivityError] = useState<string | null>(null);
+
+  const activityEntries = useMemo<DashboardActivity[]>(
+    () =>
+      recentActivities.map((activity) => ({
+        _id: activity._id,
+        title: activity.action,
+        description: String(
+          (activity.details &&
+            (typeof activity.details === "string"
+              ? activity.details
+              : ((activity.details as Record<string, unknown>).message ??
+                JSON.stringify(activity.details)))) ||
+            (activity.resourceType
+              ? `Updated ${activity.resourceType}`
+              : "Project activity"),
+        ),
+        time: formatRelativeTime(activity.createdAt),
+        user: activity.user?.name || "Unknown",
+        priority:
+          (activity.metadata?.priority as string | undefined) ??
+          (activity.action.toLowerCase().includes("delete")
+            ? "urgent"
+            : "medium"),
+        resourceType: activity.resourceType,
+      })),
+    [recentActivities],
+  );
+
+  const activityBadgeClass = (priority: string) => {
+    return (
+      ACTIVITY_PRIORITY_STYLES[priority] ??
+      "bg-gray-100 text-gray-800 border-gray-200"
+    );
+  };
+
+  useEffect(() => {
+    if (!ctx.projectId) return;
+
+    setLoadingActivities(true);
+    setActivityError(null);
+
+    getActivities(ctx.projectId)
+      .then((activities) => setRecentActivities(activities))
+      .catch((error) => {
+        setActivityError(
+          error instanceof Error ? error.message : String(error),
+        );
+      })
+      .finally(() => setLoadingActivities(false));
+  }, [ctx.projectId]);
+
+  useEffect(() => {
+    if (!socket || !ctx.projectId) return;
+
+    socket.emit(SOCKET_EVENTS.JOIN_ROOM, ctx.projectId);
+
+    const handleProjectActivity = (activity: Activity) => {
+      setRecentActivities((prev) => [activity, ...prev].slice(0, 50));
+    };
+
+    socket.on(SOCKET_EVENTS.PROJECT_ACTIVITY, handleProjectActivity);
+
+    return () => {
+      socket.off(SOCKET_EVENTS.PROJECT_ACTIVITY, handleProjectActivity);
+      socket.emit(SOCKET_EVENTS.LEAVE_ROOM, ctx.projectId);
+    };
+  }, [socket, ctx.projectId]);
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -238,48 +294,64 @@ export default function Page() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-start gap-4 p-3 text-white-500 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      <div className="flex-shrink-0 mt-1">
-                        {getActivityIcon(activity.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-medium text-gray-800 truncate">
-                            {activity.title}
-                          </p>
-                          <Badge
-                            variant="outline"
-                            className={`text-xs ${getPriorityColor(
-                              activity.priority,
-                            )}`}
-                          >
-                            {activity.priority}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {activity.description}
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-white-500">
-                          <Avatar className="w-4 h-4">
-                            <AvatarImage
-                              src="/placeholder.svg?height=16&width=16"
-                              alt={activity.user}
-                            />
-                            <AvatarFallback>
-                              {activity.user.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span>{activity.user}</span>
-                          <span>•</span>
-                          <span>{activity.time}</span>
-                        </div>
-                      </div>
+                  {loadingActivities ? (
+                    <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center text-sm text-gray-500">
+                      Loading project activity...
                     </div>
-                  ))}
+                  ) : activityError ? (
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+                      {activityError}
+                    </div>
+                  ) : activityEntries.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center text-sm text-gray-500">
+                      No project activity yet.
+                    </div>
+                  ) : (
+                    activityEntries.map((activity) => (
+                      <div
+                        key={activity._id}
+                        className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-4 transition hover:border-gray-200"
+                      >
+                        <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-700">
+                          {getActivityIcon(
+                            activity.resourceType ?? activity.title,
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <p className="text-sm font-semibold text-slate-900 truncate">
+                              {activity.title}
+                            </p>
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${activityBadgeClass(activity.priority)}`}
+                            >
+                              {activity.priority}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-slate-600 mb-2 truncate">
+                            {activity.description}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                            <div className="inline-flex items-center gap-2">
+                              <Avatar className="h-5 w-5">
+                                <AvatarImage
+                                  src="/placeholder.svg?height=16&width=16"
+                                  alt={activity.user}
+                                />
+                                <AvatarFallback>
+                                  {activity.user?.charAt(0) ?? "U"}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span>{activity.user}</span>
+                            </div>
+                            <span>•</span>
+                            <span>{activity.time}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </CardContent>
               </ScrollArea>
             </Card>

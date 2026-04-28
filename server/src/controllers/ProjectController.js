@@ -6,6 +6,7 @@ import { createDefaultFiltersAndValue } from "../utils/createDefaultFiltersAndVa
 import * as inviteRepo from "../repos/InviteRepo.js";
 import * as filterRepo from "../repos/FilterRepo.js";
 import * as filterValueRepo from "../repos/FilterValueRepo.js";
+import { recordActivity } from "../utils/activityLogger.js";
 
 export const createProject = asyncHandler(async (req, res) => {
   const project = await ProjectRepo.create({
@@ -14,6 +15,14 @@ export const createProject = asyncHandler(async (req, res) => {
   });
 
   await createDefaultFiltersAndValue(project._id, req.user.userId);
+  await recordActivity({
+    projectId: project._id,
+    userId: req.user.userId,
+    action: "created project",
+    resourceType: "project",
+    resourceId: project._id,
+    details: { name: project.name },
+  });
 
   res.status(201).json(project);
 });
@@ -48,6 +57,15 @@ export const updateProject = asyncHandler(async (req, res) => {
     );
   }
 
+  await recordActivity({
+    projectId: req.params.projectId,
+    userId: req.user.userId,
+    action: "updated project",
+    resourceType: "project",
+    resourceId: req.params.projectId,
+    details: req.body,
+  });
+
   res.json(updated);
 });
 
@@ -74,6 +92,15 @@ export const deleteProject = asyncHandler(async (req, res) => {
     }
 
     return { project, members, invites };
+  });
+
+  await recordActivity({
+    projectId,
+    userId,
+    action: "deleted project",
+    resourceType: "project",
+    resourceId: projectId,
+    details: result,
   });
 
   res.json({ message: "Project deleted successfully", result });

@@ -21,6 +21,7 @@ import monitor from "./utils/monitor.js";
 import swaggerSpec from "./config/swagger.js";
 import { devFormat, prodFormat, morganOptions } from "./config/morgan.js";
 import createSocketManager from "./socket/socketManager.js";
+import { setSocketManager } from "./socket/emitters.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -31,6 +32,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import inviteRoutes from "./routes/inviteRoutes.js";
 import memberRotues from "./routes/memberRoutes.js";
+import activityRoutes from "./routes/activityRoutes.js";
 
 import { AuthGuard, memberGaurd } from "./middleware/authMiddleware.js";
 import { YSocket } from "./socket/YSocket.js";
@@ -41,6 +43,7 @@ const server = http.createServer(app);
 
 // Initialize Socket.io
 const socketManager = createSocketManager(server);
+setSocketManager(socketManager);
 
 YSocket(socketManager.getIO());
 
@@ -73,6 +76,12 @@ app.use("/api/projects/:projectId/members", AuthGuard, memberRotues);
 app.use("/api/projects/:projectId/filters", AuthGuard, filterRoutes);
 app.use("/api/projects/:projectId/filterValues", AuthGuard, filterValueRoutes);
 app.use("/api/projects/:projectId/tasks", AuthGuard, memberGaurd, taskRoutes);
+app.use(
+  "/api/projects/:projectId/activities",
+  AuthGuard,
+  memberGaurd,
+  activityRoutes,
+);
 
 // Swagger Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

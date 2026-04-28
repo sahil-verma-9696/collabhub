@@ -1,6 +1,7 @@
 import * as pageMetaRepo from "../repos/PageMetaRepo.js";
 import * as pageRepo from "../repos/PageRepo.js";
 import { withTransaction } from "../utils/withTransaction.js";
+import { recordActivity } from "../utils/activityLogger.js";
 
 export const create = async (req, res) => {
   let page, meta;
@@ -28,6 +29,15 @@ export const create = async (req, res) => {
     );
   });
 
+  await recordActivity({
+    projectId,
+    userId: currentUserId,
+    action: "created page",
+    resourceType: "page",
+    resourceId: page._id,
+    details: { title: page.title },
+  });
+
   return res.status(201).json({ page, meta });
 };
 
@@ -53,17 +63,37 @@ export const updateByPageId = async (req, res) => {
   const pageMeta = await pageMetaRepo.updateByPageId(pageId, metaPayload);
   const page = await pageRepo.updateById(pageId, pagePayload);
 
+  await recordActivity({
+    projectId,
+    userId: req.user.userId,
+    action: "updated page",
+    resourceType: "page",
+    resourceId: pageId,
+    details: { meta: metaPayload, page: pagePayload },
+  });
+
   return res.json({ page, pageMeta });
 };
 
 export const updateById = async (req, res) => {
   const page = await pageRepo.updateById(req.params.pageId, req.body);
+
+  await recordActivity({
+    projectId: req.params.projectId,
+    userId: req.user.userId,
+    action: "updated page content",
+    resourceType: "page",
+    resourceId: req.params.pageId,
+    details: req.body,
+  });
+
   return res.json(page);
 };
 
 export const deletePage = async (req, res) => {
   const pageId = req.params.pageId;
   const userId = req.user.userId;
+  const projectId = req.params.projectId;
   
   await withTransaction(async (session) => {
     await pageRepo.softDeleteById(pageId, userId, {
@@ -71,6 +101,14 @@ export const deletePage = async (req, res) => {
     });
 
     await pageMetaRepo.deletedByPageId(pageId, userId, { session });
+  });
+
+  await recordActivity({
+    projectId,
+    userId,
+    action: "deleted page",
+    resourceType: "page",
+    resourceId: pageId,
   });
 
   return res.json({ message: "Page deleted successfully" });

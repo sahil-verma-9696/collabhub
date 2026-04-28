@@ -10,6 +10,8 @@ import * as socketService from "./socketService.js";
  * - userId, deviceId, email
  */
 export function handleConnection(socket) {
+  const io = socket.server;
+
   logger.info(
     `[ON : connection] :: name: ${socket.user.name} email: ${socket.user.email} userId: ${socket.userId}`,
   );
