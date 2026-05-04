@@ -3,25 +3,52 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { darkenColor } from "@/utils/darkenColor";
-import { Settings, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { usePageContext } from "../_context";
 import type { CSSProperties } from "react";
 import type { Response } from "@/services/get-tasks";
+import { TaskProperty } from "./task-property";
 
 export function RightInfoSheet({ task }: { task: Response }) {
   const ctx = usePageContext();
 
   return (
     <Card className="w-[30%] block px-6 shadow-none border-none space-y-2">
-      <div>
-        <Button className="flex justify-between w-full bg-transparent border border-transparent text-gray-900 hover:bg-gray-300 hover:border-gray-900 hover:border">
-          <span>Assignee</span>
-          <Settings />
-        </Button>
-        <Card className="shadow-none border-none p-3">
-          <span className="text-gray-700 text-sm">No assignee</span>
-        </Card>
-      </div>
+      <TaskProperty
+        name="Assignee"
+        initValue={[
+          {
+            _id: "abc",
+            checked: true,
+            data: {
+              _id: "abc",
+              name: "John Doe",
+            },
+          },
+          {
+            _id: "def",
+            checked: false,
+            data: {
+              _id: "def",
+              name: "Jane Doe",
+            },
+          },
+        ]}
+        onChange={(d) => {
+          console.log(d);
+        }}
+        valueUi={({ data }) => {
+          return (
+            <>
+              <div>
+                <span className="text-gray-700 text-sm">{data.name}</span>
+              </div>
+            </>
+          );
+        }}
+      >
+        <span className="text-gray-700 text-sm">No assignee</span>
+      </TaskProperty>
 
       <Separator className="bg-gray-600" />
 
@@ -35,22 +62,15 @@ export function RightInfoSheet({ task }: { task: Response }) {
         };
         return (
           <>
-            <div>
-              <Button className="flex justify-between w-full bg-transparent  border border-transparent text-gray-900 hover:bg-gray-200 hover:border-gray-400 hover:border">
-                <span>{f.name}</span>
-                <Settings />
-              </Button>
-              <Card className="shadow-none border-none p-3 flex">
-                {filterValue ? (
-                  <Badge variant="outline" style={style}>
-                    {filterValue?.valueName}
-                  </Badge>
-                ) : (
-                  <span className="text-gray-700 text-sm">No {f.name}</span>
-                )}
-              </Card>
-            </div>
-
+            <TaskProperty name={f.name}>
+              {filterValue ? (
+                <Badge variant="outline" style={style}>
+                  {filterValue?.valueName}
+                </Badge>
+              ) : (
+                <span className="text-gray-700 text-sm">No {f.name}</span>
+              )}
+            </TaskProperty>
             <Separator className="bg-gray-600" />
           </>
         );

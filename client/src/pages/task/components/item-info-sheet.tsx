@@ -64,7 +64,7 @@ function TaskTitle({ taskId, taskTitle }: TaskTitleProps) {
 
   if (!taskId || !taskTitle) return null;
 
-  async function handleSaveClick(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSaveClick(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
       const formData = Object.fromEntries(new FormData(e.currentTarget)) as {
