@@ -31,7 +31,12 @@ const scopes = [
   "https://www.googleapis.com/auth/meetings.conference.media.readonly",
 ];
 
-const cookieOptions = { maxAge: 7 * 24 * 60 * 60 * 1000 };
+const cookieOptions = {
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: true, // REQUIRED on HTTPS (Vercel/Render)
+  sameSite: "None",
+};
 
 export const register = asyncHandler(async (req, res, next) => {
   const session = await mongoose.startSession();

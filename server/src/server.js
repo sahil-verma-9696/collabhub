@@ -53,6 +53,7 @@ app.use(
   cors({
     origin: [config.SOCKET_IO_ORIGIN, config.CLIENT_ORIGIN],
     credentials: true,
+    
   }),
 );
 
