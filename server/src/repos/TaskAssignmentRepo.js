@@ -81,3 +81,14 @@ export async function create(payload, options = {}) {
 //       { new: true, session: options.session },
 //   );
 // }
+
+export async function hardDeleteByUser(
+  taskId,
+  userId,
+  options = { session: null },
+) {
+  return await Model.deleteMany(
+    { user: ObjectId(userId), task: ObjectId(taskId) },
+    { session: options.session },
+  );
+}

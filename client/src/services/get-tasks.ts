@@ -13,8 +13,22 @@ export type Filter = {
 };
 export type Response = Task & {
   filters: Filter[];
+  assignees: Assignee[];
 };
 
+export type Assignee = {
+  assignor: string;
+  createdAt: string;
+  deletedAt: string | null;
+  deletor: string | null;
+  isDeleted: boolean;
+  project: string;
+  task: string;
+  updatedAt: string;
+  user: string;
+  __v: number;
+  _id: string;
+};
 /**
  * using network it fetch the data.
  */

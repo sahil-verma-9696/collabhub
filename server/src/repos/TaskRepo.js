@@ -52,6 +52,16 @@ export async function queryTasks(projectId, taskFields = {}, filter = null) {
     },
   });
 
+  // Joining the assignee
+  pipeline.push({
+    $lookup: {
+      from: "taskassignments",
+      localField: "_id",
+      foreignField: "task",
+      as: "assignees",
+    },
+  });
+
   pipeline.push({
     $lookup: {
       from: "filtervalues",

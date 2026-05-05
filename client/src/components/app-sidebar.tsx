@@ -143,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             key={member._id}
                             className="flex justify-between"
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 text-zinc-500">
                               <User size={18} />
                               <span>{member.user.email}</span>
                             </div>

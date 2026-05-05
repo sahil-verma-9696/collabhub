@@ -20,7 +20,7 @@ export type TaskPropertyProps<D> = {
   name: string;
   valueUi?: React.FunctionComponent<{ data: D }>;
   initValue?: Value<D>[];
-  onChange?: (values: Value<D>) => void;
+  onChange?: (value: Value<D>) => void;
 } & React.PropsWithChildren;
 
 function DefaultValueUi<D>({ data }: { data: D }) {

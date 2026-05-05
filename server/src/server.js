@@ -33,6 +33,7 @@ import pageRoutes from "./routes/pageRoutes.js";
 import inviteRoutes from "./routes/inviteRoutes.js";
 import memberRotues from "./routes/memberRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
+import taskAssignmentRoutes from "./routes/taskAssignmentRoutes.js";
 
 import { AuthGuard, memberGaurd } from "./middleware/authMiddleware.js";
 import { YSocket } from "./socket/YSocket.js";
@@ -76,6 +77,12 @@ app.use("/api/projects/:projectId/members", AuthGuard, memberRotues);
 app.use("/api/projects/:projectId/filters", AuthGuard, filterRoutes);
 app.use("/api/projects/:projectId/filterValues", AuthGuard, filterValueRoutes);
 app.use("/api/projects/:projectId/tasks", AuthGuard, memberGaurd, taskRoutes);
+app.use(
+  "/api/projects/:projectId/tasks/:taskId/assignment",
+  AuthGuard,
+  memberGaurd,
+  taskAssignmentRoutes,
+);
 app.use(
   "/api/projects/:projectId/activities",
   AuthGuard,

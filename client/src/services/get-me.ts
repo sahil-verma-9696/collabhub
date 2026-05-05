@@ -11,6 +11,7 @@ export type User = {
   name: string;
   trialEndAt: number | null;
   userId: string;
+  _id: string;
 };
 
 /**
