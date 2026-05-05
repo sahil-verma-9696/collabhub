@@ -1,16 +1,16 @@
-import React from "react";
+// import React from "react";
 import { useParams } from "react-router";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+// import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import type { EditorState } from "lexical";
 import patchPage from "@/services/patch-page";
-import { SocketIOProvider } from "y-socket.io";
-import { createBindingV2__EXPERIMENTAL } from "@lexical/yjs";
-import * as Y from "yjs";
+// import { SocketIOProvider } from "y-socket.io";
+// import { createBindingV2__EXPERIMENTAL } from "@lexical/yjs";
+// import * as Y from "yjs";
 
 export const EMPTY_EDITOR_STATE = `{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}`;
 
 export function useAutosave() {
-  const [editor] = useLexicalComposerContext();
+  // const [editor] = useLexicalComposerContext();
   const { projectId, pageId } = useParams();
 
   // ✅ persist across renders

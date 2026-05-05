@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
+import {  PhoneOff, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface AudioCallPanelProps {
@@ -42,7 +42,7 @@ export function AudioCallPanel({
   }
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-8">
+    <div className="flex h-screen flex-col items-center justify-center bg-linear-to-br from-slate-900 to-slate-800 p-8">
       {/* Avatar Circle */}
       <div className="mb-8">
         <img

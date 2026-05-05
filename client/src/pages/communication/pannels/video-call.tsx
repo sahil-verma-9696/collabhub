@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import {
-  Phone,
   PhoneOff,
   Mic,
   MicOff,
@@ -35,7 +34,7 @@ export function VideoCallPanel({
   const [isVideoOn, setIsVideoOn] = useState(true)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
   const [isRinging, setIsRinging] = useState(true)
-  const [participantCount, setParticipantCount] = useState(1)
+  const [participantCount] = useState(1)
 
   useEffect(() => {
     if (isRinging) {

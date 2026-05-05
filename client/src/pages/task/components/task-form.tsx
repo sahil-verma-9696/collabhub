@@ -24,7 +24,7 @@ export default function TaskForm({ children, filterValueId }: TaskFormProps) {
   const { projectId } = useParams();
   const ctx = usePageContext();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {
@@ -47,6 +47,7 @@ export default function TaskForm({ children, filterValueId }: TaskFormProps) {
             color: filter?.color || "#000000",
           },
         ],
+        assignees: [],
       };
 
       ctx.setTasks((prev) => [...prev, task]);

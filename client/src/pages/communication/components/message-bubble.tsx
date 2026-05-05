@@ -59,7 +59,7 @@ export function MessageBubble({
   onForward,
   clientId,
 }: MessageBubbleProps) {
-  const [showActions, setShowActions] = useState(true);
+  const [showActions] = useState(true);
   const { observeMessage } = usePageContext();
 
   const bubbleColor = isOwn
@@ -91,11 +91,11 @@ export function MessageBubble({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align={isOwn ? "end" : "start"}>
-                <DropdownMenuItem onClick={() => onReply?.(content)}>
+                <DropdownMenuItem onClick={() => onReply?.(content!)}>
                   <Reply className="mr-2 h-4 w-4" />
                   Reply
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onForward?.(content)}>
+                <DropdownMenuItem onClick={() => onForward?.(content!)}>
                   <Forward className="mr-2 h-4 w-4" />
                   Forward
                 </DropdownMenuItem>

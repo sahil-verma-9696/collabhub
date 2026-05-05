@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { ReplyPreview } from "./reply-preview";
-import { usePageContext } from "../_context";
+// import { usePageContext } from "../_context";
 
 interface ChatInputProps {
   replyingTo?: { content: string; senderName?: string } | null;
@@ -19,7 +19,7 @@ export function ChatInput({
   onClearReply,
   isLoading = false,
 }: ChatInputProps) {
-  const  ctx  =  usePageContext();
+  // const  ctx  =  usePageContext();
 
   const [message, setMessage] = useState("");
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -30,7 +30,7 @@ export function ChatInput({
   const handleSend = (e: FormEvent) => {
     e.preventDefault();
     if (message.trim() || mediaFiles.length > 0) {
-      ctx.onSend(message, mediaFiles.length > 0 ? mediaFiles : undefined);
+      // ctx.onSend(message, mediaFiles.length > 0 ? mediaFiles : undefined);
       setMessage("");
       setMediaFiles([]);
     }

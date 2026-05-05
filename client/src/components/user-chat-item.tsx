@@ -17,7 +17,6 @@ export function UserChatItem({
   userAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
   userName = "John Doe",
   userStatus = "online",
-  lastSeen = "5 min ago",
 }: UserStatusItemProps) {
   return (
     <div

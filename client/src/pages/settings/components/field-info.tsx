@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router";
 
 import type { Filter } from "@/services/post-filter";
-import updateFilter from "@/services/update-filter";
+// import updateFilter from "@/services/update-filter";
 import deleteFilter from "@/services/delete-filter";
 
 import FilterOptions from "./option";
@@ -13,47 +13,47 @@ import FilterOptions from "./option";
 type Props = {
   selectedFilter: Filter | null;
   onDeleteSuccess: (id: string) => void;
-  onUpdateSuccess: (filter: Filter) => void;
+  // onUpdateSuccess: (filter: Filter) => void;
 };
 
 export default function FieldInfo({
   selectedFilter,
   onDeleteSuccess,
-  onUpdateSuccess,
+  // onUpdateSuccess,
 }: Props) {
 
   const { projectId } = useParams();
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  // const [ setDescription] = useState("");
 
   /* populate form when filter changes */
-  useEffect(() => {
-    if (selectedFilter) {
-      setName(selectedFilter.name);
-      setDescription(selectedFilter.description || "");
-    }
-  }, [selectedFilter]);
+  // useEffect(() => {
+  //   if (selectedFilter) {
+  //     setName(selectedFilter.name);
+  //     setDescription(selectedFilter.description || "");
+  //   }
+  // }, [selectedFilter]);
 
-  async function handleUpdate() {
-    if (!projectId || !selectedFilter) return;
+  // async function handleUpdate() {
+  //   if (!projectId || !selectedFilter) return;
 
-    try {
-      const updated = await updateFilter(
-        projectId as string,
-        selectedFilter._id,
-        {
-          name,
-          description,
-        }
-      );
+  //   try {
+  //     const updated = await updateFilter(
+  //       projectId as string,
+  //       selectedFilter._id,
+  //       {
+  //         name,
+  //         description,
+  //       }
+  //     );
 
-      onUpdateSuccess(updated);
+  //     onUpdateSuccess(updated);
 
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   async function handleDelete() {
     if (!projectId || !selectedFilter) return;
