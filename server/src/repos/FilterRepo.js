@@ -3,7 +3,7 @@
  * Handles all database operations related to users
  * Based on ER Diagram Schema
  */
-import Model from "../models/filterSchema.js";
+import Model from "../models/FilterSchema.js";
 import { ObjectId } from "../utils/ObjectId.js";
 
 /************************************************************************

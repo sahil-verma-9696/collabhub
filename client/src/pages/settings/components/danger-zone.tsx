@@ -57,7 +57,7 @@ export function DangerZone({
         <CardContent className="divide-y divide-red-500">
           {/* Close Project */}
           <div className="flex items-center justify-between py-2">
-            <div>
+            {/* <div>
               <h3 className="font-semibold text-black">Close project</h3>
               <p className="text-sm text-gray-700">
                 Closing a project will disable its workflows & remove it from
@@ -70,7 +70,7 @@ export function DangerZone({
               className="border-red-500 text-black hover:bg-red-600 hover:text-white"
             >
               Close this project
-            </Button>
+            </Button> */}
           </div>
 
           {/* Delete Project */}
