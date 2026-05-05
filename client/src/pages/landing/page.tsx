@@ -1,24 +1,45 @@
-import { Link } from "react-router";
-import style from "./style";
-import { useAuthContext } from "@/contexts/auth.contex";
-import { Button } from "@/components/ui/button";
-import { APP_NAME } from "@/app.constatns";
-import { ROUTES } from "@/_routes.constants";
+import { HeroSection } from "@/components/hero-section";
+import { DashboardPreview } from "@/components/dashboard-preview";
+import { BentoSection } from "@/components/bento-section";
+import { FAQSection } from "@/components/faq-section";
+import { FooterSection } from "@/components/footer-section";
+import { AnimatedSection } from "@/components/animated-section";
 
-export default function Page() {
-  const { isAuthenticated } = useAuthContext();
+
+export default function LandingPage() {
+
   return (
-    <div className={style.page}>
-      <div>
-        {isAuthenticated ? (
-          <Link to={`${ROUTES.PRIVATE.PROJECTS.ROOT}`}>
-            <Button className="cursor-pointer">Open {APP_NAME}</Button>
-          </Link>
-        ) : (
-          <Link to={`${ROUTES.PUBLIC.LOGIN}`}>
-            <Button className="cursor-pointer">Login</Button>
-          </Link>
-        )}
+    <div className="min-h-screen bg-background relative  pb-0">
+      <div className="relative z-10">
+        <main className="max-w-330 mx-auto relative">
+          <HeroSection />
+          {/* Dashboard Preview Wrapper */}
+          <div className="absolute -bottom-37.5 md:-bottom-100 left-1/2 transform -translate-x-1/2 z-30">
+            <AnimatedSection>
+              <DashboardPreview />
+            </AnimatedSection>
+          </div>
+        </main>
+        <AnimatedSection
+          id="features-section"
+          className="relative z-10 max-w-330 mx-auto mt-100"
+          delay={0.2}
+        >
+          <BentoSection />
+        </AnimatedSection>
+        <AnimatedSection
+          id="faq-section"
+          className="relative z-10 max-w-330 mx-auto mt-8 md:mt-16"
+          delay={0.2}
+        >
+          <FAQSection />
+        </AnimatedSection>
+        <AnimatedSection
+          className="relative z-10 max-w-330 mx-auto mt-8 md:mt-16"
+          delay={0.2}
+        >
+          <FooterSection />
+        </AnimatedSection>
       </div>
     </div>
   );
