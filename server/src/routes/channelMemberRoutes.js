@@ -65,48 +65,5 @@ const router = express.Router({ mergeParams: true });
  */
 router.post("/", controller.postChannels);
 
-/**
- * @swagger
- * /api/projects/{projectId}/channels:
- *   get:
- *     summary: Get all the channels of a project
- *     tags: [Channels]
- *     security:
- *       - bearerAuth: []
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: projectId
- *         required: true
- *     responses:
- *       201:
- *         description: channel created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 name:
- *                   type: string
- *                 description:
- *                   type: string
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
- *       400:
- *         description: Bad request - Invalid input data
- *       401:
- *         description: Unauthorized
- *       409:
- *         description: Conflict - channel already exists in this project.
- *       500:
- *         description: Internal server error
- */
-router.get("/", controller.getChannelsByProject);
 
 export default router;

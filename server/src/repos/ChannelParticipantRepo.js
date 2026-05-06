@@ -6,23 +6,31 @@
 
 import model from "../models/ChannelParticipantSchema.js";
 import { Types } from "mongoose";
+import { ObjectId } from "../utils/ObjectId.js";
 
 /************************************************************************
  **************************** CREATE ************************************
  ************************************************************************/
 export function create(payload) {
   return model.create({
-    channel: new Types.ObjectId(payload.channel),
-    user: new Types.ObjectId(payload.user),
-    addBy: new Types.ObjectId(payload.addBy),
+    channel: ObjectId(payload.channel),
+    user: ObjectId(payload.user),
+    addBy: ObjectId(payload.addBy),
   });
 }
 /************************************************************************
  **************************** READ **************************************
  ************************************************************************/
+export function getMembersByChannelId(channelId) {
+  return model.find({ channel: ObjectId(channelId) });
+}
+
 /************************************************************************
  **************************** UPDATE ************************************
  ************************************************************************/
 /************************************************************************
  **************************** DELETE ************************************
  ************************************************************************/
+export function deleteByChannelId(channelId) {
+  return model.deleteMany({ channel: ObjectId(channelId) });
+}

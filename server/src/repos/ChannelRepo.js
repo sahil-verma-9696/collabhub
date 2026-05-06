@@ -42,7 +42,6 @@ export async function getChannelsByProject(
 
   return await Model.find({
     project: ObjectId(projectId),
-    isDeleted: false,
   }).session(options.session);
 }
 
@@ -91,3 +90,16 @@ export async function getChannelsByProject(
 //       { new: true, session: options.session },
 //   );
 // }
+
+export async function hardDeleteById(
+  projectId,
+  channelId,
+  options = { session: null },
+) {
+  if (!channelId) throw new Error("memberId is required");
+
+  return await Model.deleteOne(
+    { _id: ObjectId(channelId), project: ObjectId(projectId) },
+    { session: options.session },
+  );
+}

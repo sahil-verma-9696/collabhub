@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserListItem } from "@/components/user-list-item";
 import { seprateBySpaces, strCaptalize } from "@/utils/formate-string";
 import { Tabs } from "@radix-ui/react-tabs";
-import { Plus } from "lucide-react";
 import { Link } from "react-router";
+import { usePageContext } from "./_context";
+import CreateChannelDialog from "./components/create-channel-dialog";
+import ChannelList from "./components/channel-list";
 
 export default function ChatPanel() {
+  const { channels, channelsLoading } = usePageContext();
   return (
     <div
       data-slot="chat-panel"
@@ -32,16 +34,10 @@ export default function ChatPanel() {
           </TabsList>
         </Tabs>
 
-        <Button>
-          <Plus /> Create Channel
-        </Button>
+        <CreateChannelDialog />
       </div>
 
-      <div className="space-y-2">
-        <Link to="abc">
-          <UserListItem user={{}} />
-        </Link>
-      </div>
+      <ChannelList channels={channels} channelsLoading={channelsLoading} />
     </div>
   );
 }
