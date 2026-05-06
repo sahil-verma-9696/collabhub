@@ -183,6 +183,21 @@ function ShowMembers(ctx: ReturnType<typeof useAccessControlPage>) {
         <h3 className="text-2xl pt-4 font-semibold">Project Members</h3>
         <ScrollArea>
           {members.map((member) => {
+            if (member.role == PROJECT_ROLE.OWNER)
+              return (
+                <UserListItem
+                  key={member._id}
+                  uid={member._id}
+                  user={member.user}
+                  lslot={
+                    <div className="flex gap-1">
+                      <div className="px-4 py-2 rounded capitalize font-extrabold text-amber-500 border border-amber-500 bg-yellow-100 text-center ">
+                        {member.role}
+                      </div>
+                    </div>
+                  }
+                />
+              );
             return (
               <UserListItem
                 key={member._id}

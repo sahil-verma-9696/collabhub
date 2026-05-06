@@ -5,12 +5,32 @@
 
 import * as memberRepo from "../repos/ProjectMemberRepo.js";
 import * as inviteRepo from "../repos/InviteRepo.js";
+import projectRepo from "../repos/ProjectRepo.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { withTransaction } from "../utils/withTransaction.js";
 import { recordActivity } from "../utils/activityLogger.js";
+import { PROJECT_ROLE } from "../common/constants.js";
 
 export const getAllProjectMembers = asyncHandler(async (req, res) => {
-  const members = await memberRepo.getAllProjectMembers(req.params.projectId);
+  const { projectId } = req.params || {};
+
+  const projectOwner = await projectRepo.getProjectOwner(projectId);
+
+  const owner = {
+    _id: null,
+    project: projectId,
+    user: projectOwner,
+    invite: null,
+    role: PROJECT_ROLE.OWNER,
+    isDeleted: false,
+    deletor: null,
+    deletedAt: null,
+  };
+
+  const members = await memberRepo.getAllProjectMembers(projectId);
+
+  members.push(owner);
+
   res.json(members);
 });
 

@@ -35,6 +35,7 @@ import { Badge } from "./ui/badge";
 import { ScrollArea } from "./ui/scroll-area";
 import { ROUTES } from "@/_routes.constants";
 import { useAppContext } from "@/contexts/app.context";
+import { PROJECT_ROLE } from "@/pages/settings/access-control.page";
 
 const data = {
   navMain: [
@@ -145,6 +146,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           >
                             <div className="flex items-center gap-2 text-zinc-500">
                               <User size={18} />
+                              {member.role == PROJECT_ROLE.OWNER && (
+                                <Badge variant="outline" className="w-14 border-amber-500 bg-yellow-100">
+                                  {member.role}
+                                </Badge>
+                              )}
+                              {member.role == PROJECT_ROLE.ADMIN && (
+                                <Badge variant="outline" className="w-14 border-violet-500 bg-purple-100">
+                                  {member.role}
+                                </Badge>
+                              )}
+                              {member.role == PROJECT_ROLE.WRITE && (
+                                <Badge variant="outline" className="w-14 border-blue-500 bg-blue-100">
+                                  {member.role}
+                                </Badge>
+                              )}
+                              {member.role == PROJECT_ROLE.READ && (
+                                <Badge variant="outline" className="w-14 bg-gray-100">
+                                  {member.role}
+                                </Badge>
+                              )}
                               <span>{member.user.email}</span>
                             </div>
                           </SidebarMenuButton>

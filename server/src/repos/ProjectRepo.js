@@ -183,6 +183,20 @@ class ProjectRepo {
     return project?.teamLimit;
   }
 
+  async getProjectOwner(projectId, options = { session: null }) {
+    if (!projectId) throw new Error("projectId is required");
+
+    const project = await Project.findOne({
+      _id: ObjectId(projectId),
+      isDeleted: false,
+    })
+      .select("owner")
+      .populate("owner") // expand owner
+      .lean()
+      .session(options.session);
+
+    return project?.owner;
+  }
   /************************************************************************
    **************************** UPDATE ************************************
    ************************************************************************/
