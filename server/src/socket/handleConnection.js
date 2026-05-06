@@ -1,4 +1,3 @@
-import { formatOnlineUsersTable } from "../utils/formatOnlineUsersTable.js";
 import logger from "../utils/logger.js";
 import * as socketService from "./socketService.js";
 
@@ -12,86 +11,43 @@ import * as socketService from "./socketService.js";
 export function handleConnection(socket) {
   const io = socket.server;
 
+  const { user } = socket.data;
+
   logger.info(
-    `[ON : connection] :: name: ${socket.user.name} email: ${socket.user.email} userId: ${socket.userId}`,
+    `[ON : connection] :: Email: ${user.email} userId: ${user.userId}`,
   );
 
-  socketService.addActiveUser({
-    userId: socket.userId,
-    deviceId: socket.data.deviceId,
-    browserInfo: socket.data.browserInfo,
-    socketId: socket.id,
-  });
+  socket.on("join-channel", ({ channelId }) => {
+    socket.join(channelId);
 
-  logger.table(
-    "Online Users Snapshot",
-    formatOnlineUsersTable(socketService.getActiveUsers()),
-  );
+    socketService.activeChannelUser.add(channelId, user.userId, socket.id);
 
-  socketService.brodcastActiveUsers();
-
-  socket.on("join-room", (roomId) => {
-    socket.join(roomId);
-
-    socket.broadcast.to(roomId).emit("user-joined", {
-      userId: socket.userId,
-      userName: socket.user.name,
-      userAvatar: socket.user.avatar,
+    socket.to(channelId).emit("user-joined-channel", {
+      userId: user.userId,
+      activeUsers: socketService.activeChannelUser.getResource(channelId),
     });
 
-    console.log(`User ${socket.user.name} joined room ${roomId}`);
+    console.log(socketService.activeChannelUser.toString());
   });
 
-  socket.on("leave-room", (roomId) => {
-    socket.leave(roomId);
+  socket.on("leave-channel", ({ channelId }) => {
+    socketService.activeChannelUser.removeSocket(
+      channelId,
+      user.userId,
+      socket.id,
+    );
 
-    socket.broadcast.to(roomId).emit("user-left", {
-      userId: socket.userId,
-      userName: socket.user.name,
+    socket.to(channelId).emit("user-leave-channel", {
+      userId: user.userId,
+      activeUsers: socketService.activeChannelUser.getResource(channelId),
     });
 
-    console.log(`User ${socket.user.name} left room ${roomId}`);
+    socket.leave(channelId);
   });
 
-  socket.on("send-message", ({ roomId, message }) => {
-    io.to(roomId).emit("receive-message", {
-      userId: socket.userId,
-      userName: socket.user.name,
-      userAvatar: socket.user.avatar,
-      message,
-      timestamp: new Date(),
-    });
-  });
-
-  socket.on("get-room-users", (roomId, callback) => {
-    const room = io.sockets.adapter.rooms.get(roomId);
-    const users = [];
-
-    if (room) {
-      room.forEach((socketId) => {
-        const s = io.sockets.sockets.get(socketId);
-
-        users.push({
-          userId: s.userId,
-          userName: s.user.name,
-          userAvatar: s.user.avatar,
-        });
-      });
-    }
-
-    callback(users);
-  });
-
-  socket.on("send-private-message", ({ targetUserId, message }) => {
-    io.sockets.sockets.forEach((s) => {
-      if (s.userId === targetUserId) {
-        s.emit("receive-private-message", {
-          fromUserId: socket.userId,
-          fromUserName: socket.user.name,
-          message,
-          timestamp: new Date(),
-        });
-      }
+  socket.on("get-active-users", ({ channelId }) => {
+    socket.emit("get-active-users", {
+      activeUsers: socketService.activeChannelUser.getResource(channelId),
     });
   });
 
@@ -99,17 +55,11 @@ export function handleConnection(socket) {
    * Disconnect
    */
   socket.on("disconnect", () => {
-    logger.info(
-      `[ON : disconnect] :: name: ${socket.user.name} email: ${socket.user.email} userId: ${socket.userId}`,
+    logger.error(
+      `[ON : disconnect] :: Email: ${user.email} userId: ${user.userId}`,
     );
-
-    socketService.removeActiveUser(socket);
-
-    logger.table(
-      "Online Users Snapshot",
-      formatOnlineUsersTable(socketService.getActiveUsers()),
-    );
-
-    socketService.brodcastActiveUsers();
+    socketService.activeChannelUser.removeBySocketId(socket.id);
   });
+
+  // socket.emit("leave-channel",{activeUser: socketService.activeChannelUser.});
 }

@@ -1,3 +1,4 @@
+import { useSocketContext } from "@/contexts/socket.context";
 import { getChannel } from "@/services/get-channel";
 import type { Channel } from "@/services/post-channel";
 import React from "react";
@@ -6,6 +7,7 @@ import { toast } from "react-toastify";
 
 export function useChattingPageLogic() {
   const { projectId, channelId } = useParams();
+  const { socket } = useSocketContext();
 
   const [channel, setChannel] = React.useState<Channel | null>(null);
   const [channelLoading, setChannelLoading] = React.useState(false);
@@ -24,9 +26,20 @@ export function useChattingPageLogic() {
         setChannel(null);
       }
     })();
-  }, []);
+  }, [projectId, channelId]);
 
-  console.log(projectId, channelId);
+  // Emmit Socket events `join-channel`, `leave-channel`, `get-active-users`
+  React.useEffect(() => {
+    if (!channelId || !socket) return () => {};
+
+    socket.emit("join-channel", { channelId });
+    socket.emit("get-active-users", { channelId });
+
+    return () => {
+      socket.emit("leave-channel", { channelId });
+    };
+  }, [channelId, socket]);
+
   return {
     channel,
     channelLoading,

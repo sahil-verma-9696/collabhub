@@ -1,7 +1,6 @@
 import { SERVER_URL } from "@/app.constatns";
 import localSpace from "./local-space";
 import { apiFetch } from "@/utils/api-fetch";
-import { MESSAGE_TYPE } from "@/pages/communication/useMain";
 /*******************************************************************
  *********************************** Types *************************
  *******************************************************************/
@@ -20,7 +19,7 @@ export type Message = {
   _id: string;
   chat: string;
   sender: string;
-  type: (typeof MESSAGE_TYPE)[keyof typeof MESSAGE_TYPE];
+  type: string;
   text?: string;
   readBy: [];
   readAt: null;

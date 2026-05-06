@@ -48,12 +48,10 @@ export const SocketAuthGuard = asyncHandler((socket, next) => {
    * GET browserInfo and deviceId from Client
    * ----------------------------------------
    */
-  const { browserInfo, deviceId } = socket.handshake.auth || {};
+  const { browserInfo, deviceId, projectId } = socket.handshake.auth || {};
 
-  if (!token || !deviceId || !browserInfo)
-    throw new Error(
-      "Invalid credentials. Required token, deviceId and browserInfo.",
-    );
+  if (!browserInfo) return next(new Error("browserInfo required"));
+  if (!deviceId) return next(new Error("deviceId required"));
 
   const user = tokenService.verifyToken(token);
 
@@ -63,14 +61,11 @@ export const SocketAuthGuard = asyncHandler((socket, next) => {
    * @description Attach user to Socket in `in-memory`.
    */
   socket.data = {
-    userId: user.userId,
+    user,
     deviceId,
     email: user.email,
     browserInfo,
   };
-
-  socket.userId = user.userId;
-  socket.user = user;
 
   next();
 });

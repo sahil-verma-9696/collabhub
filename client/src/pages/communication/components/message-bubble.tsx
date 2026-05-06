@@ -24,7 +24,7 @@ import {
   MESSAGE_STATUS_ENUM,
   type MESSAGE_STATUS,
 } from "@/services/get-messages";
-import { usePageContext } from "../_context";
+// import { usePageContext } from "../_context";
 
 interface MessageBubbleProps {
   content?: string;
@@ -60,7 +60,7 @@ export function MessageBubble({
   clientId,
 }: MessageBubbleProps) {
   const [showActions] = useState(true);
-  const { observeMessage } = usePageContext();
+  // const { observeMessage } = usePageContext();
 
   const bubbleColor = isOwn
     ? "bg-blue-500 text-white"
@@ -68,7 +68,7 @@ export function MessageBubble({
 
   return (
     <div
-      ref={observeMessage}
+      // ref={observeMessage}
       data-message-id={clientId}
       data-message-status={status}
       data-message-sender={sender}
