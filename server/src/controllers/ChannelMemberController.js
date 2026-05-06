@@ -8,45 +8,52 @@ import * as channelParticipantsRepo from "../repos/ChannelParticipantRepo.js";
 /************************************************************************
  **************************** GET ***************************************
  ************************************************************************/
-export const getChannelsByProject = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
-  const channels = await channelRepo.getChannelsByProject(projectId);
-  res.json(channels);
-});
-
-export const getChannel = asyncHandler(async (req, res) => {
+export const getChannelMembers = asyncHandler(async (req, res) => {
   const { projectId, channelId } = req.params;
-  const channel = await channelRepo.getById(channelId);
-  res.json(channel);
+
+  const { creator } = await channelRepo.getChannelCreator(channelId);
+
+  const memberCreateor = {
+    _id: null,
+    channel: channelId,
+    user: creator,
+    addBy: null,
+  };
+  const members =
+    await channelParticipantsRepo.getMembersByChannelId(channelId);
+
+  members.push(memberCreateor);
+
+  res.json(members);
 });
 
 /************************************************************************
  **************************** POST **************************************
  ************************************************************************/
-export const postChannels = asyncHandler(async (req, res) => {
-  const userId = req.user.userId;
-  const projectId = req.params.projectId;
+// export const postChannels = asyncHandler(async (req, res) => {
+//   const userId = req.user.userId;
+//   const projectId = req.params.projectId;
 
-  const { members, ...body } = req.body || {};
+//   const { members, ...body } = req.body || {};
 
-  const channel = await channelRepo.create({
-    ...body,
-    creator: userId,
-    project: projectId,
-  });
+//   const channel = await channelRepo.create({
+//     ...body,
+//     creator: userId,
+//     project: projectId,
+//   });
 
-  if (members && members.length > 0) {
-    for (const member of members) {
-      await channelParticipantsRepo.create({
-        channel: channel._id,
-        user: member,
-        addBy: userId,
-      });
-    }
-  }
+//   if (members && members.length > 0) {
+//     for (const member of members) {
+//       await channelParticipantsRepo.create({
+//         channel: channel._id,
+//         user: member,
+//         addBy: userId,
+//       });
+//     }
+//   }
 
-  return res.status(201).json(channel);
-});
+//   return res.status(201).json(channel);
+// });
 
 /************************************************************************
  **************************** PATCH *************************************
@@ -58,14 +65,14 @@ export const postChannels = asyncHandler(async (req, res) => {
  **************************** DELETE ************************************
  ************************************************************************/
 
-export const deleteChannel = asyncHandler(async (req, res) => {
-  const { projectId, channelId } = req.params;
+// export const deleteChannel = asyncHandler(async (req, res) => {
+//   const { projectId, channelId } = req.params;
 
-  await channelParticipantsRepo.deleteByChannelId(channelId);
-  await channelRepo.hardDeleteById(projectId, channelId);
+//   await channelParticipantsRepo.deleteByChannelId(channelId);
+//   await channelRepo.hardDeleteById(projectId, channelId);
 
-  res.json({ message: "Channel deleted successfully" });
-});
+//   res.json({ message: "Channel deleted successfully" });
+// });
 
 /************************************************************************
  **************************** OTHER *************************************

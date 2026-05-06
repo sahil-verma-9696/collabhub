@@ -94,7 +94,7 @@ const router = createBrowserRouter([
                         element: <CommunicationPage />,
                       },
                       {
-                        path: ":chatId",
+                        path: ":channelId",
                         element: <ChattingPage />,
                       },
                     ],

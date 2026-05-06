@@ -26,13 +26,11 @@ export async function create(payload, options = {}) {
  **************************** READ **************************************
  ************************************************************************/
 
-// export async function getById(id, options = { session: null }) {
-//   if (!id) throw new Error("_id of page is required");
+export async function getById(id, options = { session: null }) {
+  if (!id) throw new Error("_id of page is required");
 
-//   return await Model.findOne({ _id: id, isDeleted: false }).session(
-//     options.session,
-//   );
-// }
+  return await Model.findOne({ _id: id }).session(options.session);
+}
 
 export async function getChannelsByProject(
   projectId,
@@ -43,6 +41,18 @@ export async function getChannelsByProject(
   return await Model.find({
     project: ObjectId(projectId),
   }).session(options.session);
+}
+
+export async function getChannelCreator(channelId, options = { session: null }) {
+  if (!channelId) throw new Error("channelId is required");
+
+  return await Model.findOne({
+    _id: ObjectId(channelId),
+  })
+    .select("creator")
+    .populate("creator") // expand creator
+    .lean()
+    .session(options.session);
 }
 
 /************************************************************************

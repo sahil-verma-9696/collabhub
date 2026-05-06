@@ -112,6 +112,50 @@ router.get("/", controller.getChannelsByProject);
 /**
  * @swagger
  * /api/projects/{projectId}/channels/{channelId}:
+ *   get:
+ *     summary: Get a channel
+ *     tags: [Channels]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *     responses:
+ *       201:
+ *         description: channel created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Bad request - Invalid input data
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Conflict - channel already exists in this project.
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/:channelId", controller.getChannel);
+
+/**
+ * @swagger
+ * /api/projects/{projectId}/channels/{channelId}:
  *   delete:
  *     summary: Delete a channel
  *     tags: [Channels]
@@ -152,4 +196,5 @@ router.get("/", controller.getChannelsByProject);
  *         description: Internal server error
  */
 router.delete("/:channelId", controller.deleteChannel);
+
 export default router;

@@ -25,6 +25,7 @@ import { setSocketManager } from "./socket/emitters.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import channelRoutes from "./routes/channelRoutes.js";
+import channelMembersRoutes from "./routes/channelMemberRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import filterRoutes from "./routes/filterRoutes.js";
 import filterValueRoutes from "./routes/filterValueRoutes.js";
@@ -95,6 +96,12 @@ app.use(
   AuthGuard,
   memberGaurd,
   channelRoutes,
+);
+app.use(
+  "/api/projects/:projectId/channels/:channelId/members",
+  AuthGuard,
+  memberGaurd,
+  channelMembersRoutes,
 );
 
 // Swagger Documentation

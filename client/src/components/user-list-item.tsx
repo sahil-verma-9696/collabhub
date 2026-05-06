@@ -5,6 +5,7 @@ import getNameAsAvtar from "@/services/getNameAsAvtar";
 import { Dialog, DialogContent } from "./ui/dialog";
 import { UserProfile } from "./user-profile";
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export function UserListItem({
   user,
@@ -16,6 +17,7 @@ export function UserListItem({
   onNameClick,
   onClick,
   uid,
+  className,
 }: {
   user: Partial<User> | null;
   lslot?: React.ReactNode;
@@ -26,6 +28,7 @@ export function UserListItem({
   isOpenDialogByName?: boolean;
   isOpenDialogByAvtar?: boolean;
   uid?: string;
+  className?: string;
 }) {
   const [isOpenDialog, setIsOpenDialog] = React.useState<boolean>(false);
   if (!user) return null;
@@ -58,7 +61,10 @@ export function UserListItem({
     <Card
       onClick={handleClick}
       data-slot="user-list-item"
-      className="w-full rounded-md p-2 text-left hover:bg-accent focus:bg-accent focus:outline-none flex flex-row items-center justify-between shadow-none border-none"
+      className={cn(
+        "w-full rounded-md p-2 text-left hover:bg-accent focus:bg-accent focus:outline-none flex flex-row items-center justify-between shadow-none border-none",
+        className,
+      )}
     >
       <div className="flex items-center gap-2">
         <Avatar

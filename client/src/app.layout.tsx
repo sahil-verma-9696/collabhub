@@ -64,9 +64,9 @@ function ShowHeader() {
 }
 
 function ShowRightSidebar() {
-  const { chatId } = useParams();
+  const { channelId } = useParams();
 
-  if (!chatId) {
+  if (!channelId) {
     return null;
   }
 

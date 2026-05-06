@@ -1,19 +1,26 @@
 import { SERVER_URL } from "@/app.constatns";
 import { apiFetch } from "@/utils/api-fetch";
 import localSpace from "./local-space";
-import type { Channel } from "./post-channel";
+import type { User } from "./get-me";
 
 /*******************************************************************
  *********************************** Types *************************
  *******************************************************************/
-export type Response = Channel | null;
+export type ChannelMember = {
+  _id: string | null;
+  channel: string;
+  user: User;
+  addBy: User | null;
+};
+
+export type Response = ChannelMember[] | null;
 
 export type Payload = undefined;
 
 /**
  * using network it fetch the data.
  */
-export function getChannel(
+export function getChannelMembers(
   projectId?: string,
   channelId?: string,
   payload?: Payload,
@@ -22,7 +29,7 @@ export function getChannel(
   if (!channelId) throw new Error("channelId is required");
 
   return apiFetch<Response, Payload>({
-    url: `${SERVER_URL}/api/projects/${projectId}/channels/${channelId}`,
+    url: `${SERVER_URL}/api/projects/${projectId}/channels/${channelId}/members`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${localSpace.getAccessToken()}`,

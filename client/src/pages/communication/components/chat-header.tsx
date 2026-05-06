@@ -8,15 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserStatusItem } from "@/components/user-status-item";
-import type { User } from "@/services/auth";
 import { useNavigate } from "react-router";
+import { useChattingPageContext } from "../_chatting-page.context";
 
-interface ChatHeaderProps {
-  user?: User;
-}
-
-export function ChatHeader({ user }: ChatHeaderProps) {
+export function ChatHeader() {
   const navigator = useNavigate();
+  const { channel } = useChattingPageContext();
+
   return (
     <div className="flex items-center justify-between border-b bg-card p-4">
       {/* Left: User Profile Section */}
@@ -24,7 +22,17 @@ export function ChatHeader({ user }: ChatHeaderProps) {
         <Button onClick={() => navigator(-1)}>
           <ArrowLeft />
         </Button>
-        <UserStatusItem user={user} />
+        <UserStatusItem
+          user={{
+            _id: channel?._id || "",
+            name: channel?.name || "Default",
+            email: "Communication Channel",
+            __v: 0,
+            avatar: "",
+            createdAt: "",
+            updatedAt: "",
+          }}
+        />
       </div>
 
       {/* Right: Action Buttons */}

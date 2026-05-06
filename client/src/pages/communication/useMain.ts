@@ -1,4 +1,4 @@
-import { getChannels } from "@/services/get-channel";
+import { getChannels } from "@/services/get-channels";
 import type { Channel } from "@/services/post-channel";
 import React from "react";
 import { useParams } from "react-router";

@@ -22,7 +22,7 @@ export function create(payload) {
  **************************** READ **************************************
  ************************************************************************/
 export function getMembersByChannelId(channelId) {
-  return model.find({ channel: ObjectId(channelId) });
+  return model.find({ channel: ObjectId(channelId) }).populate("user");
 }
 
 /************************************************************************
