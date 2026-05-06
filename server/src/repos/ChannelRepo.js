@@ -1,7 +1,7 @@
 /**
  * Repository
  * Handles all database operations
- * Based on ER Diagram Schema 
+ * Based on ER Diagram Schema
  */
 
 import Model from "../models/ChannelSchema.js";
@@ -33,6 +33,18 @@ export async function create(payload, options = {}) {
 //     options.session,
 //   );
 // }
+
+export async function getChannelsByProject(
+  projectId,
+  options = { session: null },
+) {
+  if (!projectId) throw new Error("projectId is required");
+
+  return await Model.find({
+    project: ObjectId(projectId),
+    isDeleted: false,
+  }).session(options.session);
+}
 
 /************************************************************************
  **************************** UPDATE ************************************

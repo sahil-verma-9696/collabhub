@@ -5,10 +5,10 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    chat: {
+    channel: {
       type: mongoose.Types.ObjectId,
-      required: [true, "chat is required"],
-      ref: "Chat",
+      required: [true, "channel is required"],
+      ref: "Channel",
     },
     content: {
       type: String,

@@ -24,6 +24,7 @@ import createSocketManager from "./socket/socketManager.js";
 import { setSocketManager } from "./socket/emitters.js";
 
 import authRoutes from "./routes/authRoutes.js";
+import channelRoutes from "./routes/channelRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import filterRoutes from "./routes/filterRoutes.js";
 import filterValueRoutes from "./routes/filterValueRoutes.js";
@@ -53,7 +54,6 @@ app.use(
   cors({
     origin: [config.SOCKET_IO_ORIGIN, config.CLIENT_ORIGIN],
     credentials: true,
-    
   }),
 );
 
@@ -89,6 +89,12 @@ app.use(
   AuthGuard,
   memberGaurd,
   activityRoutes,
+);
+app.use(
+  "/api/projects/:projectId/channels",
+  AuthGuard,
+  memberGaurd,
+  channelRoutes,
 );
 
 // Swagger Documentation

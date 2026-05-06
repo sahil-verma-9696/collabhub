@@ -3,11 +3,11 @@
  */
 import mongoose from "mongoose";
 
-const chatParticipantSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
-    chat: {
+    channel: {
       type: mongoose.Types.ObjectId,
-      required: [true, "chat is required"],
+      required: [true, "channel is required"],
       ref: "Chat",
     },
     user: {
@@ -30,7 +30,7 @@ const chatParticipantSchema = new mongoose.Schema(
 /**
  * Create model
  */
-const ChatParticipant = mongoose.model("ChatParticipant", chatParticipantSchema);
+const ChatParticipant = mongoose.model("ChannelParticipant", schema);
 
 ChatParticipant.syncIndexes();
 

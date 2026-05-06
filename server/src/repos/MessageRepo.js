@@ -13,7 +13,7 @@ import { Types } from "mongoose";
 export function create(payload) {
   return model.create({
     ...payload,
-    chat: new Types.ObjectId(payload.chat),
+    channel: new Types.ObjectId(payload.channel),
     sender: new Types.ObjectId(payload.sender),
   });
 }

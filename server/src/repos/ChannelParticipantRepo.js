@@ -4,7 +4,7 @@
  * Based on ER Diagram Schema
  */
 
-import model from "../models/ChatParticipantSchema.js";
+import model from "../models/ChannelParticipantSchema.js";
 import { Types } from "mongoose";
 
 /************************************************************************
@@ -12,7 +12,7 @@ import { Types } from "mongoose";
  ************************************************************************/
 export function create(payload) {
   return model.create({
-    chat: new Types.ObjectId(payload.chat),
+    channel: new Types.ObjectId(payload.channel),
     user: new Types.ObjectId(payload.user),
     addBy: new Types.ObjectId(payload.addBy),
   });

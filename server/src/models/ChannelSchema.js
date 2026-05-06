@@ -3,12 +3,8 @@
  */
 import mongoose from "mongoose";
 
-export const MESSAGE_TYPE = {
-  GROUP: "group",
-  DIRECT: "direct",
-};
 
-const chatSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     project: {
       type: mongoose.Types.ObjectId,
@@ -20,18 +16,10 @@ const chatSchema = new mongoose.Schema(
       required: [true, "creator is required"],
       ref: "User",
     },
-    type: {
-      type: String,
-      enum: {
-        values: [MESSAGE_TYPE.GROUP, MESSAGE_TYPE.DIRECT],
-        message: "{VALUE} is not supported",
-      },
-      required: [true, "type is required"],
-    },
     name: {
       type: String,
       maxLength: [100, "name must not exceed 100 characters"],
-      default: "Unnamed Chat",
+      default: "Unnamed Channel",
     },
   },
   {
@@ -43,7 +31,7 @@ const chatSchema = new mongoose.Schema(
 /**
  * Create model
  */
-const Chat = mongoose.model("Chat", chatSchema);
+const Chat = mongoose.model("Channel", schema);
 
 Chat.syncIndexes();
 

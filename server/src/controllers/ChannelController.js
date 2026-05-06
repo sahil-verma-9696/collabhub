@@ -1,15 +1,16 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import * as channelRepo from "../repos/ChannelRepo.js";
-import config from "../config/env.js";
-import { withTransaction } from "../utils/withTransaction.js";
+// import config from "../config/env.js";
+// import { withTransaction } from "../utils/withTransaction.js";
 
 /************************************************************************
  **************************** GET ***************************************
  ************************************************************************/
-// export const getAll = asyncHandler(async (req, res) => {
-//   const users = await userRepo.getAll();
-//   res.json(users);
-// });
+export const getChannelsByProject = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const channels = await channelRepo.getChannelsByProject(projectId);
+  res.json(channels);
+});
 
 /************************************************************************
  **************************** POST **************************************
