@@ -4,7 +4,7 @@ import {
   FileText,
   Plus,
   Users,
-  Calendar,
+  // Calendar,
   Bell,
 } from "lucide-react";
 
@@ -416,20 +416,20 @@ export default function Page() {
                       Create New Task
                     </Button>
                   </Link>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     className="w-full justify-start bg-transparent"
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Create New Page
-                  </Button>
-                  <Button
+                  </Button> */}
+                  {/* <Button
                     variant="outline"
                     className="w-full justify-start bg-transparent"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     Schedule Meeting
-                  </Button>
+                  </Button> */}
                   <Link
                     to={`${ROUTES.PRIVATE.PROJECTS.ROOT}/${ctx.projectId}/${ROUTES.PRIVATE.PROJECTS.SETTINGS.ROOT}/${ROUTES.PRIVATE.PROJECTS.SETTINGS.ACCESS_CONTROL}`}
                   >
@@ -444,60 +444,7 @@ export default function Page() {
                 </CardContent>
               </Card>
 
-              <Card className="h-45">
-                <CardHeader>
-                  <CardTitle>Upcoming Deadlines</CardTitle>
-                </CardHeader>
-                <ScrollArea className="h-25">
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          Database Migration
-                        </p>
-                        <p className="text-xs text-gray-500">Due tomorrow</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          User Research Report
-                        </p>
-                        <p className="text-xs text-gray-500">Due in 2 days</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          Design System Review
-                        </p>
-                        <p className="text-xs text-gray-500">Due in 5 days</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          Design System Review
-                        </p>
-                        <p className="text-xs text-gray-500">Due in 5 days</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          Design System Review
-                        </p>
-                        <p className="text-xs text-gray-500">Due in 5 days</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </ScrollArea>
-              </Card>
+             
             </div>
           </div>
         </div>
