@@ -24,18 +24,16 @@ export async function createFilterValue(payload, filterId, userId) {
  **************************** READ **************************************
  ************************************************************************/
 
-export async function getFilterValueByFilter(filterId, userId) {
+export async function getFilterValueByFilter(filterId) {
   const res = await FilterValue.find({
     filter: ObjectId(filterId),
-    creator: ObjectId(userId),
   });
 
   return res;
 }
-export async function getFilterValueByName(name, userId) {
+export async function getFilterValueByName(name) {
   const filterValueName = await FilterValue.findOne({
     name: name,
-    creator: ObjectId(userId),
   });
   return filterValueName;
 }
