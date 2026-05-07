@@ -43,39 +43,45 @@ const BentoCard = ({
 export function BentoSection() {
   const cards = [
     {
-      title: "AI-powered code reviews.",
-      description: "Get real-time, smart suggestions for cleaner code.",
+      title: "Real-time team collaboration",
+      description:
+        "Collaborate with teammates instantly using shared workspaces, live updates, and synced project activity.",
       image: "/dashboard-preview.png",
       Component: FeaturePreview,
     },
     {
-      image: "/taskboard-preview.png",
-      title: "Real-time coding previews",
-      description: "Chat, collaborate, and instantly preview changes together.",
+      title: "Smart task management",
+      description:
+        "Organize tasks with boards, priorities, deadlines, labels, and progress tracking in one place.",
+      image: "/task-preview.png",
       Component: FeaturePreview,
     },
     {
-      image: "/dashboard-preview.png",
-      title: "One-click integrations",
-      description: "Easily connect your workflow with popular dev tools.",
+      title: "Workspace activity tracking",
+      description:
+        "Track every important action across projects with a centralized activity feed and audit logs.",
+      image: "/activity-preview.png",
       Component: FeaturePreview,
     },
     {
-      image: "/dashboard-preview.png",
-      title: "Flexible MCP connectivity",
-      description: "Effortlessly manage and configure MCP server access.",
-      Component: FeaturePreview, // Updated component
+      title: "Role-based member management",
+      description:
+        "Invite members, assign roles, and securely manage workspace access with permission controls.",
+      image: "/members-preview.png",
+      Component: FeaturePreview,
     },
     {
-      image: "/dashboard-preview.png",
-      title: "Launch parallel coding agents", // Swapped position
-      description: "Solve complex problems faster with multiple AI agents.",
-      Component: FeaturePreview, // Updated component
+      title: "Integrated team communication",
+      description:
+        "Discuss ideas, share updates, and collaborate smoothly with built-in communication channels.",
+      image: "/chat-preview.png",
+      Component: FeaturePreview,
     },
     {
+      title: "Project and document collaboration",
+      description:
+        "Manage projects, share documents, and keep your entire team aligned from planning to delivery.",
       image: "/dashboard-preview.png",
-      title: "Deployment made easy", // Swapped position
-      description: "Go from code to live deployment on Vercel instantly.",
       Component: FeaturePreview,
     },
   ];

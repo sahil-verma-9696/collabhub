@@ -2,7 +2,7 @@ import { HeroSection } from "@/components/hero-section";
 import { DashboardPreview } from "@/components/dashboard-preview";
 import { BentoSection } from "@/components/bento-section";
 import { FAQSection } from "@/components/faq-section";
-import { FooterSection } from "@/components/footer-section";
+// import { FooterSection } from "@/components/footer-section";
 import { AnimatedSection } from "@/components/animated-section";
 
 
@@ -34,12 +34,12 @@ export default function LandingPage() {
         >
           <FAQSection />
         </AnimatedSection>
-        <AnimatedSection
+        {/* <AnimatedSection
           className="relative z-10 max-w-330 mx-auto mt-8 md:mt-16"
           delay={0.2}
         >
           <FooterSection />
-        </AnimatedSection>
+        </AnimatedSection> */}
       </div>
     </div>
   );
