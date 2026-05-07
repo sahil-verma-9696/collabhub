@@ -9,6 +9,7 @@ export const SOCKET_EVENTS = {
   JOIN_CHAT: "ws::join_chat",
   LEAVE_CHAT: "ws::leave_chat",
   PROJECT_ACTIVITY: "project-activity",
+  PROJECT_STATS: "project-stats",
   JOIN_ROOM: "join-room",
   LEAVE_ROOM: "leave-room",
 

@@ -46,6 +46,16 @@ export function handleConnection(socket) {
     socket.leave(channelId);
   });
 
+  socket.on("join-room", (roomId) => {
+    if (!roomId) return;
+    socket.join(roomId);
+  });
+
+  socket.on("leave-room", (roomId) => {
+    if (!roomId) return;
+    socket.leave(roomId);
+  });
+
   socket.on("get-active-users", ({ channelId }) => {
     socket.emit("get-active-users", {
       activeUsers: socketService.activeChannelUser.getResource(channelId),
@@ -56,7 +66,7 @@ export function handleConnection(socket) {
     const { channel } = body;
 
     const message = await messageRepo.create({ sender: user.userId, ...body });
-    
+
     socket.emit("message", message);
     socket.to(channel).emit("message", message);
   });

@@ -1,7 +1,10 @@
 import express from "express";
 import { createProject } from "../controllers/ProjectController.js";
 import { getAllProjects } from "../controllers/ProjectController.js";
-import { getProject } from "../controllers/ProjectController.js";
+import {
+  getProject,
+  getProjectStatsController,
+} from "../controllers/ProjectController.js";
 import { updateProject } from "../controllers/ProjectController.js";
 import { deleteProject } from "../controllers/ProjectController.js";
 import {
@@ -210,6 +213,51 @@ router.get("/", getAllProjects);
  *         description: Project not found
  */
 router.get("/:projectId", memberGaurd, getProject);
+
+/**
+ * @swagger
+ * /api/projects/{projectId}/stats:
+ *   get:
+ *     summary: Get project dashboard statistics
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Project ID
+ *     responses:
+ *       200:
+ *         description: Project statistics retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalChannels:
+ *                   type: integer
+ *                 totalTasks:
+ *                   type: integer
+ *                 completedTasks:
+ *                   type: integer
+ *                 activePages:
+ *                   type: integer
+ *                 totalMembers:
+ *                   type: integer
+ *                 teamLimit:
+ *                   type: integer
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Not a member of this project
+ *       404:
+ *         description: Project not found
+ */
+router.get("/:projectId/stats", memberGaurd, getProjectStatsController);
 
 /**
  * @swagger

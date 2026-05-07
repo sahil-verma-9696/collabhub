@@ -27,6 +27,9 @@ import { useSocketContext } from "@/contexts/socket.context";
 import { SOCKET_EVENTS } from "@/socket.events.constants";
 import { ROUTES } from "@/_routes.constants";
 import getActivities, { type Activity } from "@/services/get-activities";
+import getProjectStats, {
+  type ProjectDashboardStats,
+} from "@/services/get-project-stats";
 // import { SidebarProvider } from "@/components/ui/sidebar";
 
 const ACTIVITY_PRIORITY_STYLES: Record<string, string> = {
@@ -68,6 +71,11 @@ export default function Page() {
   const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(true);
   const [activityError, setActivityError] = useState<string | null>(null);
+
+  const [projectStats, setProjectStats] =
+    useState<ProjectDashboardStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   const activityEntries = useMemo<DashboardActivity[]>(
     () =>
@@ -120,6 +128,20 @@ export default function Page() {
   }, [ctx.projectId]);
 
   useEffect(() => {
+    if (!ctx.projectId) return;
+
+    setLoadingStats(true);
+    setStatsError(null);
+
+    getProjectStats(ctx.projectId)
+      .then((stats) => setProjectStats(stats))
+      .catch((error) => {
+        setStatsError(error instanceof Error ? error.message : String(error));
+      })
+      .finally(() => setLoadingStats(false));
+  }, [ctx.projectId]);
+
+  useEffect(() => {
     if (!socket || !ctx.projectId) return;
 
     socket.emit(SOCKET_EVENTS.JOIN_ROOM, ctx.projectId);
@@ -128,10 +150,16 @@ export default function Page() {
       setRecentActivities((prev) => [activity, ...prev].slice(0, 50));
     };
 
+    const handleProjectStats = (stats: ProjectDashboardStats) => {
+      setProjectStats(stats);
+    };
+
     socket.on(SOCKET_EVENTS.PROJECT_ACTIVITY, handleProjectActivity);
+    socket.on(SOCKET_EVENTS.PROJECT_STATS, handleProjectStats);
 
     return () => {
       socket.off(SOCKET_EVENTS.PROJECT_ACTIVITY, handleProjectActivity);
+      socket.off(SOCKET_EVENTS.PROJECT_STATS, handleProjectStats);
       socket.emit(SOCKET_EVENTS.LEAVE_ROOM, ctx.projectId);
     };
   }, [socket, ctx.projectId]);
@@ -200,9 +228,11 @@ export default function Page() {
                 <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">24</div>
+                <div className="text-2xl font-bold">
+                  {loadingStats ? "—" : (projectStats?.totalChannels ?? "—")}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  +2 from yesterday
+                  {statsError ? "Unable to load stats" : "+2 from yesterday"}
                 </p>
               </CardContent>
             </Card>
@@ -214,9 +244,11 @@ export default function Page() {
                 <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">156</div>
+                <div className="text-2xl font-bold">
+                  {loadingStats ? "—" : (projectStats?.totalTasks ?? "—")}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  +12 from yesterday
+                  {statsError ? "Unable to load stats" : "+12 from yesterday"}
                 </p>
               </CardContent>
             </Card>
@@ -226,9 +258,11 @@ export default function Page() {
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">128</div>
+                <div className="text-2xl font-bold">
+                  {loadingStats ? "—" : (projectStats?.completedTasks ?? "—")}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  +18 from yesterday
+                  {statsError ? "Unable to load stats" : "+18 from yesterday"}
                 </p>
               </CardContent>
             </Card>
@@ -241,10 +275,12 @@ export default function Page() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {appCtx.pagesMeta.length}
+                  {loadingStats
+                    ? "—"
+                    : (projectStats?.activePages ?? appCtx.pagesMeta.length)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  +1 from yesterday
+                  {statsError ? "Unable to load stats" : "+1 from yesterday"}
                 </p>
               </CardContent>
             </Card>
@@ -259,22 +295,28 @@ export default function Page() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  <React.Suspense fallback={<div>Loading...</div>}>
-                    <Await resolve={appCtx.loaderData.members}>
-                      {(members) => {
-                        return (
-                          <>
-                            {members.length}/
-                            <React.Suspense fallback={<div>Loading...</div>}>
-                              <Await resolve={appCtx.loaderData.project}>
-                                {(project) => <>{project.teamLimit}</>}
-                              </Await>
-                            </React.Suspense>
-                          </>
-                        );
-                      }}
-                    </Await>
-                  </React.Suspense>
+                  {loadingStats ? (
+                    "—"
+                  ) : projectStats?.totalMembers ? (
+                    `${projectStats.totalMembers}/${projectStats.teamLimit}`
+                  ) : (
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                      <Await resolve={appCtx.loaderData.members}>
+                        {(members) => {
+                          return (
+                            <>
+                              {members.length}/
+                              <React.Suspense fallback={<div>Loading...</div>}>
+                                <Await resolve={appCtx.loaderData.project}>
+                                  {(project) => <>{project.teamLimit}</>}
+                                </Await>
+                              </React.Suspense>
+                            </>
+                          );
+                        }}
+                      </Await>
+                    </React.Suspense>
+                  )}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Total team members

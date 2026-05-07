@@ -7,6 +7,7 @@ import * as inviteRepo from "../repos/InviteRepo.js";
 import * as filterRepo from "../repos/FilterRepo.js";
 import * as filterValueRepo from "../repos/FilterValueRepo.js";
 import { recordActivity } from "../utils/activityLogger.js";
+import { getProjectStats } from "../utils/projectStats.js";
 
 export const createProject = asyncHandler(async (req, res) => {
   const project = await ProjectRepo.create({
@@ -104,4 +105,9 @@ export const deleteProject = asyncHandler(async (req, res) => {
   });
 
   res.json({ message: "Project deleted successfully", result });
+});
+
+export const getProjectStatsController = asyncHandler(async (req, res) => {
+  const projectStats = await getProjectStats(req.params.projectId);
+  res.json(projectStats);
 });

@@ -1,5 +1,5 @@
 import * as ActivityRepo from "../repos/ActivityRepo.js";
-import { emitProjectActivity } from "../socket/emitters.js";
+import { emitProjectActivity, emitProjectStats } from "../socket/emitters.js";
 
 export async function recordActivity({
   projectId,
@@ -21,6 +21,9 @@ export async function recordActivity({
   });
 
   emitProjectActivity(projectId, activity);
+  emitProjectStats(projectId).catch(() => {
+    // Stats emission is best-effort and should not block activity recording.
+  });
 
   return activity;
 }
