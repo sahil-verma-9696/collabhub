@@ -5,7 +5,7 @@
  */
 
 import model from "../models/MessageSchema.js";
-import { Types } from "mongoose";
+import { ObjectId } from "../utils/ObjectId.js";
 
 /************************************************************************
  **************************** CREATE ************************************
@@ -13,16 +13,23 @@ import { Types } from "mongoose";
 export function create(payload) {
   return model.create({
     ...payload,
-    channel: new Types.ObjectId(payload.channel),
-    sender: new Types.ObjectId(payload.sender),
+    channel: ObjectId(payload.channel),
+    sender: ObjectId(payload.sender),
   });
 }
 /************************************************************************
  **************************** READ **************************************
  ************************************************************************/
+export function getMessagesByChannelId(channelId) {
+  return model.find({ channel: ObjectId(channelId) });
+}
+
 /************************************************************************
  **************************** UPDATE ************************************
  ************************************************************************/
 /************************************************************************
  **************************** DELETE ************************************
  ************************************************************************/
+export function hardDeleteByChannelId(channelId) {
+  return model.deleteMany({ channel: ObjectId(channelId) });
+}

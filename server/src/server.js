@@ -34,6 +34,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import inviteRoutes from "./routes/inviteRoutes.js";
 import memberRotues from "./routes/memberRoutes.js";
+import messagesRoutes from "./routes/messageRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
 import taskAssignmentRoutes from "./routes/taskAssignmentRoutes.js";
 
@@ -102,6 +103,12 @@ app.use(
   AuthGuard,
   memberGaurd,
   channelMembersRoutes,
+);
+app.use(
+  "/api/projects/:projectId/channels/:channelId/messages",
+  AuthGuard,
+  memberGaurd,
+  messagesRoutes,
 );
 
 // Swagger Documentation

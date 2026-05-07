@@ -1,49 +1,42 @@
 import { SERVER_URL } from "@/app.constatns";
-import localSpace from "./local-space";
 import { apiFetch } from "@/utils/api-fetch";
+import localSpace from "./local-space";
+
 /*******************************************************************
  *********************************** Types *************************
  *******************************************************************/
 
-export const MESSAGE_STATUS_ENUM = {
-  SENT: "sent",
-  DELIVERED: "delivered",
-  READ: "read",
-  PENDING: "pending",
-} as const;
-
-export type MESSAGE_STATUS =
-  (typeof MESSAGE_STATUS_ENUM)[keyof typeof MESSAGE_STATUS_ENUM];
-
 export type Message = {
   _id: string;
-  chat: string;
+  channel: string;
+  content: string;
   sender: string;
-  type: string;
-  text?: string;
-  readBy: [];
-  readAt: null;
-  isEdited: false;
-  isDeleted: false;
+  mediaUri: string;
   createdAt: string;
   updatedAt: string;
-  clientId: string;
-  status: MESSAGE_STATUS;
-  __v: number;
 };
 
+export type Response = Message[] | null;
+
+export type Payload = undefined;
+
 /**
- * Get Messages of a user's chat
- * -----------------------
- *
- * using network it fetch the friends of a user.
+ * using network it fetch the data.
  */
-export default async function getMessages(chatId: string) {
-  return apiFetch<Message[]>({
-    url: `${SERVER_URL}/messages?chatId=${chatId}`,
+export function getMessages(
+  projectId?: string,
+  channelId?: string,
+  payload?: Payload,
+) {
+  if (!projectId) throw new Error("projectId is required");
+  if (!channelId) throw new Error("channelId is required");
+
+  return apiFetch<Response, Payload>({
+    url: `${SERVER_URL}/api/projects/${projectId}/channels/${channelId}/messages`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${localSpace.getAccessToken()}`,
     },
+    body: payload,
   });
 }

@@ -1,12 +1,10 @@
-"use client";
-
-import { useState, useRef, type ChangeEvent, type FormEvent } from "react";
+import { useState, useRef, type FormEvent, type ChangeEvent } from "react";
 import { Send, Paperclip, Smile, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { ReplyPreview } from "./reply-preview";
-// import { usePageContext } from "../_context";
+import { useChattingPageContext } from "../_chatting-page.context";
 
 interface ChatInputProps {
   replyingTo?: { content: string; senderName?: string } | null;
@@ -19,7 +17,7 @@ export function ChatInput({
   onClearReply,
   isLoading = false,
 }: ChatInputProps) {
-  // const  ctx  =  usePageContext();
+  const ctx = useChattingPageContext();
 
   const [message, setMessage] = useState("");
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -27,13 +25,17 @@ export function ChatInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = (e: FormEvent) => {
-    e.preventDefault();
+  const sendMessage = () => {
     if (message.trim() || mediaFiles.length > 0) {
-      // ctx.onSend(message, mediaFiles.length > 0 ? mediaFiles : undefined);
+      ctx.sendMessage(message);
       setMessage("");
       setMediaFiles([]);
     }
+  };
+
+  const handleSend = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    sendMessage();
   };
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +151,7 @@ export function ChatInput({
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              handleSend(e);
+              sendMessage();
             }
           }}
         />

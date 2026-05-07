@@ -1,41 +1,20 @@
 import React from "react";
 import { Card } from "./ui/card";
 import { UserListItem } from "./user-list-item";
-import {
-  getChannelMembers,
-  type ChannelMember,
-} from "@/services/get-channelMembers";
 import { useParams } from "react-router";
-import { toast } from "react-toastify";
 import { useSocketContext } from "@/contexts/socket.context";
 import localSpace from "@/services/local-space";
+import { useGetChannelMembers } from "@/hooks/use-get-channel-members";
 
 export const RightSidebar = () => {
-  const { projectId, channelId } = useParams();
   const { socket } = useSocketContext();
 
-  const [members, setMembers] = React.useState<ChannelMember[]>([]);
   const [activeUserIds, setActiveUserIds] = React.useState<string[]>([]);
 
-  const [membersLoading, setMembersLoading] = React.useState(false);
+  const { channelId } = useParams();
 
   // get channel members
-  React.useEffect(() => {
-    (async function () {
-      if (!projectId || !channelId) return;
-
-      try {
-        setMembersLoading(true);
-        const res = await getChannelMembers(projectId, channelId);
-
-        setMembers((res as ChannelMember[]) || []);
-        setMembersLoading(false);
-      } catch (error) {
-        toast.error((error as Error).message);
-        setMembersLoading(false);
-      }
-    })();
-  }, [projectId, channelId]);
+  const { members, membersLoading } = useGetChannelMembers();
 
   // listen to socket
   React.useEffect(() => {
@@ -114,7 +93,7 @@ export const RightSidebar = () => {
         <h2 className="my-2">Offline - {offlineUsers.length || 0}</h2>
 
         {offlineUsers.map((member) => {
-          if (member.addBy == null) return null;
+          // if (member.addBy == null) return null;
           return (
             <UserListItem
               className="hover:bg-red-100 border border-gray-400 bg-red-100"

@@ -1,6 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import * as channelRepo from "../repos/ChannelRepo.js";
 import * as channelParticipantsRepo from "../repos/ChannelParticipantRepo.js";
+import * as messageRepo from "../repos/MessageRepo.js";
 
 // import config from "../config/env.js";
 // import { withTransaction } from "../utils/withTransaction.js";
@@ -62,6 +63,7 @@ export const deleteChannel = asyncHandler(async (req, res) => {
   const { projectId, channelId } = req.params;
 
   await channelParticipantsRepo.deleteByChannelId(channelId);
+  await messageRepo.hardDeleteByChannelId(channelId);
   await channelRepo.hardDeleteById(projectId, channelId);
 
   res.json({ message: "Channel deleted successfully" });

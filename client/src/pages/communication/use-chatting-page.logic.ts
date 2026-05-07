@@ -4,6 +4,8 @@ import type { Channel } from "@/services/post-channel";
 import React from "react";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
+import { useMessage } from "./use-message";
+import { useGetChannelMembers } from "@/hooks/use-get-channel-members";
 
 export function useChattingPageLogic() {
   const { projectId, channelId } = useParams();
@@ -11,6 +13,10 @@ export function useChattingPageLogic() {
 
   const [channel, setChannel] = React.useState<Channel | null>(null);
   const [channelLoading, setChannelLoading] = React.useState(false);
+
+  const ctx = useMessage();
+
+  const { members, membersLoading } = useGetChannelMembers();
 
   React.useEffect(() => {
     (async function () {
@@ -43,5 +49,8 @@ export function useChattingPageLogic() {
   return {
     channel,
     channelLoading,
+    members,
+    membersLoading,
+    ...ctx,
   };
 }

@@ -6,9 +6,6 @@ import {
   Forward,
   Trash2,
   MoreHorizontal,
-  Check,
-  CheckCheck,
-  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,10 +17,7 @@ import {
 import { useState } from "react";
 import { ReplyPreview } from "./reply-preview";
 import { formatTime } from "@/utils/formate-string";
-import {
-  MESSAGE_STATUS_ENUM,
-  type MESSAGE_STATUS,
-} from "@/services/get-messages";
+import type { User } from "@/services/auth";
 // import { usePageContext } from "../_context";
 
 interface MessageBubbleProps {
@@ -36,11 +30,9 @@ interface MessageBubbleProps {
   linkDescription?: string;
   linkUrl?: string;
   replyTo?: { content: string; senderName?: string };
-  status: MESSAGE_STATUS;
   onReply?: (content: string) => void;
   onForward?: (content: string) => void;
-  clientId: string;
-  sender: string;
+  sender?: User;
 }
 
 export function MessageBubble({
@@ -53,11 +45,9 @@ export function MessageBubble({
   linkDescription,
   linkUrl,
   replyTo,
-  status,
   sender,
   onReply,
   onForward,
-  clientId,
 }: MessageBubbleProps) {
   const [showActions] = useState(true);
   // const { observeMessage } = usePageContext();
@@ -69,8 +59,6 @@ export function MessageBubble({
   return (
     <div
       // ref={observeMessage}
-      data-message-id={clientId}
-      data-message-status={status}
       data-message-sender={sender}
       className={`flex gap-2 ${isOwn ? "justify-end" : "justify-start"}`}
       // onMouseEnter={() => setShowActions(true)}
@@ -175,17 +163,16 @@ export function MessageBubble({
               </div>
             </a>
           )}
-          <p className="flex items-center gap-2">
-            <span className="text-xs">{formatTime(timestamp)}</span>
-            {status === MESSAGE_STATUS_ENUM.PENDING && <Clock size={12} />}
-            {status === MESSAGE_STATUS_ENUM.SENT && <Check size={12} />}
-            {status === MESSAGE_STATUS_ENUM.DELIVERED && (
-              <CheckCheck size={12} />
-            )}
-            {status === MESSAGE_STATUS_ENUM.READ && (
-              <CheckCheck size={12} color="blue" />
-            )}
-          </p>
+          <div>
+            <p className="flex items-center gap-2">
+              <span className="text-xs italic">{formatTime(timestamp)}</span>
+            </p>
+            <p className="flex gap-2 italic">
+              <span className="text-xs">
+                By {sender?.name}( {sender?.email.split('@')[0]} )
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

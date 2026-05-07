@@ -31,5 +31,6 @@ export default function useMain() {
     channels,
     channelsLoading,
     setChannels,
+    messages: [],
   };
 }

@@ -1,5 +1,6 @@
 import logger from "../utils/logger.js";
 import * as socketService from "./socketService.js";
+import * as messageRepo from "../repos/MessageRepo.js";
 
 /**
  * handleConnection
@@ -49,6 +50,15 @@ export function handleConnection(socket) {
     socket.emit("get-active-users", {
       activeUsers: socketService.activeChannelUser.getResource(channelId),
     });
+  });
+
+  socket.on("message", async (body) => {
+    const { channel } = body;
+
+    const message = await messageRepo.create({ sender: user.userId, ...body });
+    
+    socket.emit("message", message);
+    socket.to(channel).emit("message", message);
   });
 
   /**

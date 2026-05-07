@@ -1,16 +1,22 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { MessageBubble } from "./message-bubble";
-import type { Message } from "@/services/get-messages";
 import localSpace from "@/services/local-space";
+import { useChattingPageContext } from "../_chatting-page.context";
+import type { User } from "@/services/auth";
 
-interface ChatMessagesProps {
-  messages: Message[] | null;
-  onReply?: (message: Message) => void;
-  replyingTo?: Message | null;
-}
-
-export function ChatMessages({ messages, onReply }: ChatMessagesProps) {
+export function ChatMessages() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { messages, members } = useChattingPageContext();
+
+  const messageWithSender = useMemo(() => {
+    if (!messages || !members) return [];
+    return messages.map((message) => {
+      return {
+        ...message,
+        sender: members.find((member) => member.user._id === message.sender),
+      };
+    });
+  }, [messages, members]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -20,7 +26,7 @@ export function ChatMessages({ messages, onReply }: ChatMessagesProps) {
 
   if (!messages || messages.length === 0)
     return (
-      <div className="flex h-full items-center justify-center">
+      <div className="flex-1 flex flex-col items-center justify-center">
         <p className="text-muted-foreground text-center">
           No messages yet. Start the conversation!
         </p>
@@ -32,17 +38,13 @@ export function ChatMessages({ messages, onReply }: ChatMessagesProps) {
       ref={scrollRef}
       className="flex-1 overflow-y-auto space-y-4 bg-transparent p-4"
     >
-      {messages.map((message) => (
-        <div key={message._id || message.clientId}>
+      {messageWithSender.map((message) => (
+        <div key={message._id}>
           <MessageBubble
-            content={message.text}
+            content={message.content}
             timestamp={message.createdAt}
-            isOwn={isOwn(message)}
-            type={message.type}
-            onReply={() => onReply?.(message)}
-            status={message.status}
-            clientId={message.clientId}
-            sender={message.sender}
+            isOwn={isOwn(message.sender?.user._id as string)}
+            sender={message.sender?.user as User | undefined}
           />
         </div>
       ))}
@@ -50,6 +52,6 @@ export function ChatMessages({ messages, onReply }: ChatMessagesProps) {
   );
 }
 
-function isOwn(message: Message) {
-  return localSpace.getUser()?._id === message.sender;
+function isOwn(senderId: string) {
+  return localSpace.getUser()?._id === senderId;
 }
